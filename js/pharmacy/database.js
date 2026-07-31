@@ -17,7 +17,7 @@ let defaultAsnaf = [
 
 
 // ====== FINAL CATEGORIES OVERRIDE ======
-const FINAL_CATS = [مصروفات",دواء" , "كوزمتكس","];
+const FINAL_CATS = ["مصروفات","دواء" , "كوزمتكس"];
 
 let dbStore = JSON.parse(localStorage.getItem('dbStore') || 'null');
 if (!dbStore || !dbStore.asnaf) {
