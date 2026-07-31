@@ -8,11 +8,9 @@
     <link rel="stylesheet" href="css/pharmacy.css">
     <link rel="stylesheet" href="css/private.css">
     <style>
-      .tab-content{ display:none!important; }
-      .tab-content.active{ display:block!important; }
-       #daily,#total,#purchases,#sales,#database{ display:none; }
-       #daily.active,#total.active,#purchases.active,#sales.active,#database.active{ display:block!important; }
-       #unified-all-global{ position:fixed; bottom:20px; left:20px; z-index:9999; background:#7c3aed; color:#fff; border:none; padding:12px 22px; border-radius:30px; font-weight:900; font-size:14px; cursor:pointer; box-shadow:0 8px 20px rgba(124,58,237,.4); }
+      #pharmacyApp.tab-content{ display:none!important; }
+      #pharmacyApp.tab-content.active{ display:block!important; }
+      #unified-all-global{ position:fixed; bottom:20px; left:20px; z-index:999999; background:#7c3aed; color:#fff; border:none; padding:12px 22px; border-radius:30px; font-weight:900; font-size:14px; cursor:pointer; box-shadow:0 8px 20px rgba(124,58,237,.5); }
     </style>
 </head>
 <body>
@@ -43,21 +41,21 @@
     <button id="unified-all-global" onclick="unifiedExportAll()">📦 تصدير كله XLSX</button>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="js/pharmacy/googleSync.js?v=14"></script>
-    <script src="js/pharmacy/daily.js?v=14"></script>
-    <script src="js/pharmacy/total.js?v=14"></script>
-    <script src="js/pharmacy/purchases.js?v=14"></script>
-    <script src="js/pharmacy/sales.js?v=14"></script>
-    <script src="js/pharmacy/database.js?v=14"></script>
-    <script src="js/pharmacy/actions.js?v=14"></script>
-    <script src="js/private/private.js?v=14"></script>
-    <script src="js/private/masrofaty.js?v=14"></script>
-    <script src="js/private/dyon.js?v=14"></script>
-    <script src="js/private/hodor.js?v=14"></script>
-    <script src="js/private/notes.js?v=14"></script>
-    <script src="js/export.js?v=14"></script>
-    <script type="module" src="firebase-config.js?v=14"></script>
-    <script type="module" src="app.js?v=14"></script>
+    <script src="js/pharmacy/googleSync.js?v=16"></script>
+    <script src="js/pharmacy/daily.js?v=16"></script>
+    <script src="js/pharmacy/total.js?v=16"></script>
+    <script src="js/pharmacy/purchases.js?v=16"></script>
+    <script src="js/pharmacy/sales.js?v=16"></script>
+    <script src="js/pharmacy/database.js?v=16"></script>
+    <script src="js/pharmacy/actions.js?v=16"></script>
+    <script src="js/private/private.js?v=16"></script>
+    <script src="js/private/masrofaty.js?v=16"></script>
+    <script src="js/private/dyon.js?v=16"></script>
+    <script src="js/private/hodor.js?v=16"></script>
+    <script src="js/private/notes.js?v=16"></script>
+    <script src="js/export.js?v=16"></script>
+    <script type="module" src="firebase-config.js?v=16"></script>
+    <script type="module" src="app.js?v=16"></script>
 
     <script>
         function showTab(name){
