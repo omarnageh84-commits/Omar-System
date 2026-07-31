@@ -13,6 +13,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const USER_ID = "omar_main";
-
-// ده لينك الشيت الجديد بتاعك - المراية اللي بتكمل
 export const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbymAX_drOLObItZtYvQlv2DwiTwUp8gDrPrtQyNyLUZVTUH6GTJINe2xnIUYvFwEIHlcw/exec";
