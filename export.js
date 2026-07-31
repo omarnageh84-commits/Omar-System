@@ -1,66 +1,43 @@
-// js/export.js - تصدير اكسل لكل الصفحات
-function exportToExcel(filename, rows) {
-  if (!rows ||!rows.length) { alert('مفيش داتا تتصدر'); return; }
-  // بنستخدم CSV عشان يشتغل بدون مكتبات
-  let csv = rows.map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
-  let blob = new Blob(["\uFEFF" + csv], {type: 'text/csv;charset=utf-8;'});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement('a'); a.href = url; a.download = filename + '.csv'; a.click();
+function downloadCSV(filename, rows){
+  if(!rows || rows.length===0){ alert('مفيش داتا'); return; }
+  let csv = rows.map(r=> r.map(c=> `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  let blob = new Blob(["\uFEFF"+csv], {type:'text/csv;charset=utf-8;'});
+  let a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename+'.csv'; a.click();
 }
 
-// 1- تصدير اليومية
-function exportDaily() {
-  let date = localStorage.getItem('selectedDate') || new Date().toLocaleDateString('en-GB');
-  let store = JSON.parse(localStorage.getItem('dailyStore')||'{}');
-  let data = store[date]; if(!data){ alert('مفيش يومية لليوم ده'); return; }
-  let arr = Array.isArray(data)? data : Object.values(data);
-  let rows = [['الموظف','الشيفت','العجز','المورد','القيمة']];
-  arr.forEach(it => {
-    if(!it.id ||!it.id.startsWith('t1_')) return;
-    let m = it.id.match(/t1_r(\d+)_c(\d+)/); if(!m) return;
-    // هنجمع الصفوف
-  });
-  // طريقة اسهل: ناخد من الجدول نفسه اللي ظاهر
-  let table = document.querySelector('#daily table') || document.querySelector('table');
-  if(table){
-    let r = [...table.querySelectorAll('tr')].map(tr => [...tr.querySelectorAll('th,td')].map(td => td.innerText));
-    exportToExcel('يومية-'+date, r); return;
+function getTableRows(table){
+  return [...table.querySelectorAll('tr')].map(tr=> [...tr.querySelectorAll('th,td,input,select')].map(el=>{
+    if(el.tagName==='INPUT' || el.tagName==='SELECT') return el.value;
+    return el.innerText.trim();
+  })).filter(r=> r.join('').trim()!=='');
+}
+
+window.exportCurrentTab = function(){
+  let tab = document.querySelector('#pharmacyApp .tab-content.active')?.id || 'daily';
+  let table = document.querySelector(`#${tab} table`) || document.querySelector(`#${tab} .db-card table`) || document.querySelector(`#${tab} table`);
+  if(!table){ 
+    // صفحة الاجمالي مفيهاش table واحد، هناخد كل الجداول
+    let allRows = [['البيانات']];
+    document.querySelectorAll(`#${tab} table`).forEach(t=>{
+      allRows = allRows.concat(getTableRows(t));
+      allRows.push(['---']);
+    });
+    if(allRows.length>1){ downloadCSV(tab+'-'+new Date().toISOString().slice(0,10), allRows); return; }
+    alert('مفيش جدول في الصفحة دي'); return;
   }
-  alert('افتح صفحة اليومية الاول');
+  let rows = getTableRows(table);
+  downloadCSV(tab+'-'+new Date().toISOString().slice(0,10), rows);
 }
 
-// 2- تصدير الاجمالي (اللي عندك already بس هنخليه احسن)
-function exportTotalAll() {
-  let rows = [['التاريخ','دواء','كوزمتكس','مصاريف','الاجمالي']];
-  document.querySelectorAll('#dailyTrend tr').forEach(tr=>{
-    let tds = [...tr.querySelectorAll('td')].map(td=>td.innerText);
-    if(tds.length) rows.push(tds);
+window.addExportButtons = function(){
+  ['daily','total','purchases','sales','database'].forEach(id=>{
+    let cont = document.getElementById(id);
+    if(!cont || cont.querySelector('.btn-export-all')) return;
+    let btn = document.createElement('button');
+    btn.className = 'btn-export-all';
+    btn.innerHTML = '📥 تصدير اكسل';
+    btn.style.cssText = 'background:#0f172a;color:#fff;border:none;padding:7px 14px;border-radius:10px;font-weight:800;cursor:pointer;margin:8px;float:left;';
+    btn.onclick = exportCurrentTab;
+    cont.prepend(btn);
   });
-  exportToExcel('الاجمالي-'+new Date().toLocaleDateString('en-GB'), rows);
-}
-
-// 3- تصدير قواعد البيانات - الاصناف والموردين
-function exportDatabase(type) {
-  let tbody = document.getElementById('db-'+type);
-  if(!tbody){ alert('افتح قواعد البيانات الاول'); return; }
-  let rows = [];
-  let head = [...document.querySelector(`#db-${type}`)?.closest('.db-card')?.querySelectorAll('th')||[]].map(th=>th.innerText);
-  if(head.length) rows.push(head);
-  [...tbody.querySelectorAll('tr')].forEach(tr=>{
-    let cols = [...tr.querySelectorAll('input,select')].map(el=>el.value);
-    if(cols.length) rows.push(cols);
-  });
-  exportToExcel(type+'-'+new Date().toLocaleDateString('en-GB'), rows);
-}
-
-// 4- زر عام يضاف فوق اي صفحة
-function addExportBtn(pageId, funcName, label){
-  let container = document.getElementById(pageId);
-  if(!container || container.querySelector('.my-export-btn')) return;
-  let btn = document.createElement('button');
-  btn.className = 'my-export-btn';
-  btn.textContent = label || '📥 تصدير اكسل';
-  btn.style.cssText = 'background:#0f172a;color:#fff;border:none;padding:6px 14px;border-radius:8px;font-weight:800;cursor:pointer;margin:6px';
-  btn.onclick = window[funcName];
-  container.prepend(btn);
 }
