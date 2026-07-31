@@ -1,0 +1,56 @@
+/* === COMPACT MODE - Omar Pharmacy - تصغير 20% عن النسخة السابقة === */
+* { box-sizing: border-box; }
+body { font-size: 10px !important; background: #f1f5f9 !important; }
+#database, #daily, #total, #purchases, #stock-sales, #private { padding: 5px !important; }
+
+/* التابات فوق - تصغير 20% */
+button, .tab-btn { padding: 5px 9px !important; font-size: 10px !important; height: 26px !important; border-radius: 6px !important; }
+
+/* كل الجداول - تصغير 20% */
+.pro-table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; border-collapse: collapse !important; }
+.pro-table th { padding: 4px 2px !important; font-size: 8px !important; height: 22px !important; background: #f8fafc !important; font-weight: 800 !important; white-space: nowrap !important; overflow: hidden !important; }
+.pro-table td { height: 24px !important; padding: 1px 1px !important; font-size: 10px !important; overflow: hidden !important; }
+.pro-table td input, .pro-table td select { width: 100% !important; height: 21px !important; font-size: 10px !important; padding: 1px 3px !important; border: 1px solid #e2e8f0 !important; border-radius: 5px !important; background: #fff !important; text-align: center !important; }
+.pro-table td input::placeholder { color: #cbd5e1 !important; font-size: 8px !important; }
+
+/* كروت الجداول - تصغير 20% */
+.table-card { border-radius: 6px !important; margin-bottom: 6px !important; border: 1px solid #e2e8f0 !important; box-shadow: 0 1px 2px rgba(0,0,0,.05) !important; }
+.table-title { padding: 5px 8px !important; font-size: 9px !important; height: 26px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+.table-title span { padding: 2px 6px !important; font-size: 8px !important; height: 18px !important; line-height: 14px !important; }
+
+/* هيدر اليومية - تصغير 20% */
+.daily-header { padding: 5px 8px !important; gap: 6px !important; margin-bottom: 5px !important; border-radius: 6px !important; background: #fff !important; border: 1px solid #e2e8f0 !important; height: 34px !important; }
+.daily-header label { font-size: 9px !important; }
+.daily-header input { padding: 3px 6px !important; font-size: 10px !important; height: 22px !important; border-radius: 5px !important; }
+.daily-header small { font-size: 8px !important; }
+
+/* الصفين التانيين */
+.second-row { gap: 5px !important; margin-top: 5px !important; display: grid !important; grid-template-columns: 1fr 1fr !important; }
+
+/* فلاتر - تصغير 20% */
+.purch-filter, .total-filters { padding: 5px 6px !important; gap: 5px !important; margin-bottom: 5px !important; border-radius: 6px !important; min-height: 34px !important; }
+.purch-filter input, .purch-filter select, .total-filters input, .total-filters select { padding: 3px 5px !important; font-size: 9px !important; height: 22px !important; border-radius: 5px !important; }
+.total-filters label { font-size: 7px !important; margin-bottom: 1px !important; }
+
+/* قواعد البيانات - تصغير 20% */
+.db-grid { gap: 5px !important; grid-template-columns: repeat(auto-fit, minmax(208px, 1fr)) !important; }
+.db-card { border-radius: 6px !important; max-height: 44vh !important; }
+.db-card.big { grid-column: span 2 !important; max-height: 56vh !important; }
+.db-head { padding: 4px 6px !important; font-size: 8px !important; height: 24px !important; }
+.db-body { overflow-y: auto !important; overflow-x: hidden !important; }
+.db-body table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; }
+.db-body th { padding: 3px 1px !important; font-size: 7px !important; height: 19px !important; }
+.db-body td { height: 22px !important; padding: 1px 1px !important; }
+.db-body td input { height: 19px !important; font-size: 9px !important; padding: 1px 3px !important; }
+.db-body td:last-child { width: 19px !important; min-width: 19px !important; max-width: 19px !important; }
+
+/* الوان الفرق */
+.neg { background: #fef2f2 !important; color: #dc2626 !important; }
+.pos { background: #f0fdf4 !important; color: #16a34a !important; font-weight: 800 !important; }
+
+/* اخفاء القيم الافتراضية */
+input[value="ملاحظة"], input[value="0"] { color: #94a3b8 !important; }
+input:focus { border-color: #0f172a !important; background: #fffbeb !important; outline: none !important; }
+
+/* تصغير عام اضافي 20% للمسافات */
+.container, .main-content { padding: 5px !important; }
