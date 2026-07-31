@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,31 +8,16 @@
     <link rel="stylesheet" href="css/pharmacy.css">
     <link rel="stylesheet" href="css/private.css">
     <style>
-        .tab-content {
-            display: none !important;
-        }
-
-        .tab-content.active {
-            display: block !important;
-        }
-
-        #pharmacyApp .tab-content {
-            display: none !important;
-        }
-
-        #pharmacyApp .tab-content.active {
-            display: block !important;
-        }
+       .tab-content { display: none!important; }
+       .tab-content.active { display: block!important; }
     </style>
 </head>
-
 <body>
     <div class="app-container">
         <div class="top-switch">
             <button class="top-btn active" data-top="pharmacy">💊 الصيدلية</button>
             <button class="top-btn" data-top="private">الخاص</button>
         </div>
-
         <div id="pharmacyApp">
             <div class="nav-bar" id="navBar">
                 <button class="nav-tab active" data-tab="daily">📅 اليومية</button>
@@ -50,46 +34,41 @@
                 <div id="database" class="tab-content"></div>
             </div>
         </div>
-
-        <div id="privateApp" style="display:none;">
-            <div id="private"></div>
-        </div>
+        <div id="privateApp" style="display:none;"><div id="private"></div></div>
     </div>
 
-    <!-- الترتيب مهم -->
-    <script src="js/pharmacy/googleSync.js"></script>
-    <script src="js/pharmacy/daily.js"></script>
-    <script src="js/pharmacy/total.js"></script>
-    <script src="js/pharmacy/purchases.js"></script>
-    <script src="js/pharmacy/sales.js"></script>
-    <script src="js/pharmacy/database.js"></script>
-    <script src="js/pharmacy/actions.js"></script>
+    <!-- 1- الاساسيات العادية -->
+    <script src="js/pharmacy/googleSync.js?v=6"></script>
+    <script src="js/pharmacy/daily.js?v=6"></script>
+    <script src="js/pharmacy/total.js?v=6"></script>
+    <script src="js/pharmacy/purchases.js?v=6"></script>
+    <script src="js/pharmacy/sales.js?v=6"></script>
+    <script src="js/pharmacy/database.js?v=6"></script>
+    <script src="js/pharmacy/actions.js?v=6"></script>
+    <script src="js/private/private.js?v=6"></script>
+    <script src="js/private/masrofaty.js?v=6"></script>
+    <script src="js/private/dyon.js?v=6"></script>
+    <script src="js/private/hodor.js?v=6"></script>
+    <script src="js/private/notes.js?v=6"></script>
+    <script src="js/export.js?v=6"></script>
 
-    <script src="js/private/private.js"></script>
-    <script src="js/private/masrofaty.js"></script>
-    <script src="js/private/dyon.js"></script>
-    <script src="js/private/hodor.js"></script>
-    <script src="js/private/notes.js"></script>
+    <!-- 2- الفايربيس لازم يكون module -->
+    <script type="module" src="firebase-config.js?v=6"></script>
+    <script type="module" src="app.js?v=6"></script>
 
     <script>
         function showTab(name) {
-            document.querySelectorAll('#pharmacyApp .tab-content').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('#pharmacyApp.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-
             let target = document.getElementById(name);
             if (target) target.classList.add('active');
             document.querySelector(`[data-tab="${name}"]`)?.classList.add('active');
-
-            // ارسم تبويب واحد بس عشان اليومية متظهرش في الاجمالي
             if (name === 'daily' && typeof renderDaily === 'function') renderDaily();
             if (name === 'total' && typeof renderTotal === 'function') renderTotal();
             if (name === 'purchases' && typeof renderPurchases === 'function') renderPurchases();
             if (name === 'sales' && typeof renderSales === 'function') renderSales();
             if (name === 'database' && typeof renderDatabase === 'function') renderDatabase();
         }
-
         function showTop(mode) {
             document.querySelectorAll('.top-btn').forEach(b => b.classList.remove('active'));
             if (mode === 'pharmacy') {
@@ -104,21 +83,12 @@
                 if (typeof renderPrivate === 'function') renderPrivate();
             }
         }
-
-        document.querySelectorAll('.nav-tab').forEach(btn => {
-            btn.addEventListener('click', () => showTab(btn.dataset.tab));
-        });
-        document.querySelectorAll('.top-btn').forEach(btn => {
-            btn.addEventListener('click', () => showTop(btn.dataset.top));
-        });
-
+        document.querySelectorAll('.nav-tab').forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+        document.querySelectorAll('.top-btn').forEach(btn => btn.addEventListener('click', () => showTop(btn.dataset.top)));
         window.addEventListener('load', async () => {
-            if (typeof fetchSheetData === 'function') {
-                await fetchSheetData();
-            }
+            if (typeof fetchSheetData === 'function') await fetchSheetData();
             showTop('pharmacy');
         });
     </script>
 </body>
-
 </html>
