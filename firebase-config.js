@@ -13,15 +13,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const USER_ID = "omar_main";
-export const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbymAX_drOLObItZtYvQlv2DwiTwUp8gDrPrtQyNyLUZVTUH6GTJINe2xnIUYvFwEIHlcw/exec";
 
-// حفظ في Firebase
+// اللينك الجديد النهائي - الإصدار 17
+export const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx7rPrkIqZOR-Q22nRRoouUrbJnNiQ92za17Zw3QF5m-Y12efdy0aep8D_LgkesJdPQ2g/exec";
+
 export async function saveToFirebase(storeName, data) {
   const ref = doc(db, "users", USER_ID);
   await setDoc(ref, { [storeName]: data }, { merge: true });
-}
-export async function loadFromFirebase() {
-  const ref = doc(db, "users", USER_ID);
-  const snap = await getDoc(ref);
-  return snap.exists()? snap.data() : {};
 }
