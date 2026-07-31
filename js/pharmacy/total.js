@@ -1,43 +1,49 @@
-// ==================== الاجمالي - نهائي احترافي - مبيعات كاش فقط ====================
+// ==================== الاجمالي - احترافي جدا - مبيعات من اجمالي البيع كاش ====================
 let activeMonthTab = localStorage.getItem('activeMonthTab') || null;
-let monthCashTotal = 0; // اجمالي مبيعات الشهر كاش فقط
+let monthCashTotal = 0;
 
 function renderTotal() {
   let el = document.getElementById('total'); if (!el) return;
   el.innerHTML = `<div id="total-wrap">
     <style>
-  .glass{background:#fff;border-radius:16px;padding:14px;margin-bottom:14px;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.05)}
-  .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .filters input{padding:8px 12px;border-radius:10px;border:1.5px solid #e2e8f0;font-size:11px;font-weight:700}
-  .filters button{padding:9px 16px;border:none;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;color:#fff;transition:.2s}
-  .filters button:hover{transform:translateY(-1px)}
-    table{width:100%;border-collapse:collapse;font-size:11px}
-    th{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:13px 6px;font-size:11px;text-align:center;letter-spacing:.3px}
-    td{padding:11px 6px;text-align:center;border-bottom:1px solid #f1f5f9;font-weight:700}
-    tr:hover td{background:#f8fafc}
-  .safi{background:linear-gradient(135deg,#0f172a,#334155);color:#fff;border-radius:10px;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-  .month-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-  .month-tab{padding:10px 20px;border-radius:24px;border:1.5px solid #e2e8f0;background:#fff;font-weight:900;font-size:12px;cursor:pointer;transition:.2s}
-  .month-tab.active{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 4px 10px rgba(15,23,42,.3)}
-  .profit-input{width:70px;padding:7px;border-radius:10px;border:1.5px solid #cbd5e1;text-align:center;font-weight:900;background:#fff}
-  .kpi{padding:10px 14px;border-radius:12px;font-weight:900;font-size:12px;text-align:center;min-width:110px}
+   .glass{background:#fff;border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid #eef2f7;box-shadow:0 6px 18px rgba(15,23,42,.06)}
+   .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+   .filters input{padding:8px 12px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:11px;font-weight:700}
+   .filters button{padding:9px 16px;border:none;border-radius:12px;font-weight:800;font-size:11px;cursor:pointer;color:#fff;transition:.2s}
+   .month-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+   .month-tab{padding:10px 20px;border-radius:24px;border:1.5px solid #e2e8f0;background:#fff;font-weight:900;font-size:12px;cursor:pointer}
+   .month-tab.active{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 6px 14px rgba(0,0,0,.15)}
+    table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;overflow:hidden;border-radius:14px}
+    th{background:#0f172a;color:#fff;padding:14px 8px;font-size:11px;text-align:center;font-weight:900}
+    td{padding:12px 6px;text-align:center;border-bottom:1px solid #f1f5f9;font-weight:700;background:#fff}
+    tr:last-child td{border-bottom:none}
+   .safi{background:#0f172a;color:#fff;border-radius:10px;font-weight:900}
+   .profit-input{width:64px;padding:6px;border-radius:10px;border:1.5px solid #cbd5e1;text-align:center;font-weight:900}
+   .kpi-card{flex:1;min-width:140px;background:linear-gradient(135deg,#f8fafc,#fff);border:1px solid #e2e8f0;border-radius:14px;padding:12px;text-align:center}
+   .kpi-card b{display:block;font-size:18px;margin-top:4px}
+   .badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;display:inline-block}
     </style>
 
-    <div class="glass" style="background:linear-gradient(135deg,#ffffff,#f8fafc)">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="width:36px;height:36px;background:#0f172a;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px">⚙️</div>
-          <div>
-            <div style="font-weight:900;font-size:13px">توزيع الارباح حسب التصنيف</div>
-            <div style="font-size:10px;color:#64748b">المبيعات = كاش فقط (قيمة الشيفت) بدون انستا وفودافون</div>
+    <div class="glass">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:42px;height:42px;background:linear-gradient(135deg,#0f172a,#334155);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff">📊</div>
+          <div><div style="font-weight:900;font-size:14px">توزيع الارباح - حسب التصنيف</div><div style="font-size:10px;color:#64748b">المبيعات = اجمالي بيع الشهر كاش فقط (قيمة الشيفت) - انستا وفودافون ارباح منفصلة للصيدلية</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="kpi-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe">
+            <span style="font-size:10px;color:#1e40af">مبيعات الشهر كاش</span>
+            <b id="autoSalesKPI" style="color:#1e40af">0</b>
+            <span style="font-size:9px;color:#64748b">من اجمالي البيع</span>
           </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div class="kpi" style="background:#e0f2fe;border:1px solid #bae6fd">ربح مطلوب % <input id="desiredProfit" type="number" class="profit-input" style="width:60px;margin-top:4px" oninput="saveProfitConfig()"></div>
-          <div class="kpi" style="background:#fef3c7;border:1px solid #fde68a">مبيعات متوقعة <input id="expectedSales" type="number" class="profit-input" style="width:90px;margin-top:4px" oninput="saveProfitConfig()"></div>
-          <button onclick="saveProfitConfig();renderTotalTable()" style="background:#0f172a;padding:8px 14px;border-radius:10px;color:#fff;font-weight:800">حفظ</button>
+          <div class="kpi-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0">
+            <span style="font-size:10px;color:#166534">نسبة الربح المطلوبة %</span>
+            <input id="desiredProfit" type="number" class="profit-input" style="width:70px;margin-top:6px;font-size:14px" oninput="saveProfitConfig()">
+          </div>
+          <button onclick="saveProfitConfig();renderTotalTable()" style="background:#0f172a;padding:10px 16px;border-radius:12px;color:#fff;font-weight:900">تحديث</button>
         </div>
       </div>
-      <div id="profitDistTable" style="overflow:auto"></div>
+      <div id="profitDistTable" style="margin-top:14px;overflow:auto"></div>
     </div>
 
     <div class="glass">
@@ -47,10 +53,9 @@ function renderTotal() {
         <button onclick="clearTotalFilters()" style="background:#64748b">مسح الفلتر</button>
         <button onclick="fetchSheetData()" style="background:#16a34a">🔄 مزامنة من الشيت</button>
         <button onclick="exportTotalExcel()" style="background:#0f172a">📥 تصدير Excel</button>
-        <span id="monthCashLabel" style="margin-right:auto;font-weight:900;font-size:11px;background:#f1f5f9;padding:8px 12px;border-radius:20px"></span>
       </div>
-      <div id="monthTabs" class="month-tabs"></div>
-      <div id="totalTableCard"></div>
+      <div id="monthTabs" class="month-tabs" style="margin-top:12px"></div>
+      <div id="totalTableCard" style="margin-top:10px"></div>
     </div>
   </div>`;
   loadProfitConfig();
@@ -68,96 +73,84 @@ function getSupplierClassifications(){
   ['suppliers','suppliersStore','db_suppliers'].forEach(k=>{
     try{ let raw=localStorage.getItem(k); if(!raw) return; let data=JSON.parse(raw); if(Array.isArray(data)) data.forEach(o=>{ let c=o?.category||o?.التصنيف; if(c) cats.add(c.toString().trim()); }); }catch(e){}
   });
-  try{ document.querySelectorAll('select').forEach(sel=>{ [...sel.options].forEach(op=>{ let t=op.textContent.trim(); if(['مخزن دواء','شركة دواء','عام','كوزمتكس','مصاريف','المصروفات'].includes(t)) cats.add(t.replace('المصروفات','مصاريف')); }); }); }catch(e){}
+  try{ document.querySelectorAll('select').forEach(sel=>{ [...sel.options].forEach(op=>{ let t=op.textContent.trim(); if(['مخزن دواء','شركة دواء','عام','كوزمتكس','مصاريف'].includes(t)) cats.add(t); }); }); }catch(e){}
   if(cats.size===0) ['مخزن دواء','شركة دواء','عام','كوزمتكس','مصاريف'].forEach(c=>cats.add(c));
   return [...cats].filter(Boolean);
 }
 
 function loadProfitConfig(){
-  let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{"desired":50,"expected":100000,"dist":{"مخزن دواء":40,"شركة دواء":30,"عام":10,"كوزمتكس":15,"مصاريف":5}}');
-  setTimeout(()=>{
-    if(document.getElementById('desiredProfit')) document.getElementById('desiredProfit').value=cfg.desired||50;
-    if(document.getElementById('expectedSales')) document.getElementById('expectedSales').value=cfg.expected||100000;
-  },30);
+  let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{"desired":50,"dist":{"مخزن دواء":40,"شركة دواء":30,"عام":10,"كوزمتكس":15,"مصاريف":5}}');
+  setTimeout(()=>{ if(document.getElementById('desiredProfit')) document.getElementById('desiredProfit').value=cfg.desired||50; },30);
 
   let cats=getSupplierClassifications();
   let dist=cfg.dist||{};
-  let expected=cfg.expected||100000;
+  let sales = monthCashTotal || 0; // من اجمالي البيع كاش
   let desired=cfg.desired||50;
   let remainingPerc=100-desired;
-  let profitValue=expected*desired/100;
-  let remainingValue=expected*remainingPerc/100;
+  let profitValue=sales*desired/100;
+  let remainingValue=sales*remainingPerc/100;
+
+  if(document.getElementById('autoSalesKPI')) document.getElementById('autoSalesKPI').textContent=sales.toLocaleString();
 
   let html=`
-  <div style="overflow:auto;border-radius:14px;border:1.5px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04)">
-  <table style="min-width:900px">
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <div class="badge" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe">المبيعات كاش: ${sales.toLocaleString()}</div>
+    <div class="badge" style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0">ربح مطلوب ${desired}% = ${profitValue.toLocaleString()}</div>
+    <div class="badge" style="background:#f8fafc;color:#334155;border:1px solid #e2e8f0">المتبقي ${remainingPerc}% = ${remainingValue.toLocaleString()}</div>
+  </div>
+  <div style="overflow:auto;border-radius:14px;border:1px solid #eef2f7">
+  <table>
     <thead>
       <tr>
-        <th style="border-radius:0 14px 0 0">البند</th>
-        <th>نسبة الربح المطلوبة</th>
-        <th>المبيعات (كاش فقط)</th>
-        <th>المتبقي بعد الربح</th>
-        ${cats.map(c=>`<th>${c}</th>`).join('')}
+        <th style="width:140px">البند</th>
+        ${cats.map(c=>`<th>${c}<div style="font-size:9px;font-weight:400;opacity:.7;margin-top:2px"><input data-cat="${c}" value="${dist[c]||0}" oninput="saveProfitConfig()" class="profit-input" style="width:50px"> %</div></th>`).join('')}
+        <th>الاجمالي</th>
       </tr>
     </thead>
     <tbody>
-      <tr style="background:#f8fafc">
-        <td style="background:#1e293b;color:#fff;font-weight:900">مثال (النسبة %)</td>
-        <td><span style="background:#0f172a;color:#fff;padding:4px 10px;border-radius:20px">${desired}%</span></td>
-        <td>100%</td>
-        <td>${remainingPerc}%</td>
-        ${cats.map(c=>`<td><input data-cat="${c}" value="${dist[c]||0}" oninput="saveProfitConfig()" class="profit-input"> %</td>`).join('')}
+      <tr>
+        <td style="background:#f8fafc;font-weight:900">المفروض كده</td>
+        ${cats.map(c=>{ let p=dist[c]||0; let val=remainingValue*p/100; return `<td data-val="${c}"><div style="font-size:12px;font-weight:900">${val.toLocaleString()}</div><div style="font-size:9px;color:#64748b">${p}% من المتبقي</div></td>`; }).join('')}
+        <td style="background:#f1f5f9;font-weight:900">${remainingValue.toLocaleString()}</td>
+      </tr>
+      <tr style="background:#fffbeb">
+        <td style="background:#fef3c7;font-weight:900;color:#92400e">الفعلي بقا</td>
+        ${cats.map(c=>`<td data-actual="${c}" style="background:#fffbeb;font-weight:900">-</td>`).join('')}
+        <td data-actual="totalCat" style="background:#fef3c7;font-weight:900">-</td>
       </tr>
       <tr>
-        <td style="background:#0f172a;color:#fff">بناء ع المبيعات المفروض كده</td>
-        <td style="color:#16a34a;font-size:13px;background:#f0fdf4">${profitValue.toLocaleString()}</td>
-        <td style="font-size:13px;background:#fffbeb">${expected.toLocaleString()}</td>
-        <td style="font-size:13px;background:#f0f9ff">${remainingValue.toLocaleString()}</td>
-        ${cats.map(c=>{ let p=dist[c]||0; let val=remainingValue*p/100; return `<td data-val="${c}" style="background:#f8fafc">${val.toLocaleString()}</td>`; }).join('')}
-      </tr>
-      <tr style="background:#fef9c3">
-        <td style="background:#f59e0b;color:#000;font-weight:900">الفعلي بقا (من الشهر الحالي)</td>
-        <td data-actual="profit" style="font-weight:900">-</td>
-        <td data-actual="sales" style="font-weight:900">-</td>
-        <td data-actual="remaining" style="font-weight:900">-</td>
-        ${cats.map(c=>`<td data-actual="${c}" style="font-weight:900">-</td>`).join('')}
-      </tr>
-      <tr style="background:#fee2e2">
-        <td style="background:#dc2626;color:#fff;font-weight:900">الفرق (المشاكل)</td>
-        <td data-diff="profit">-</td>
-        <td data-diff="sales">-</td>
-        <td data-diff="remaining">-</td>
+        <td style="background:#fee2e2;font-weight:900;color:#991b1b">الفرق (المشاكل)</td>
         ${cats.map(c=>`<td data-diff="${c}" style="font-weight:900">-</td>`).join('')}
+        <td data-diff="totalCat">-</td>
       </tr>
     </tbody>
   </table>
   </div>
-  <div id="distSum" style="text-align:center;margin-top:10px;font-weight:800;font-size:11px;background:#f8fafc;padding:8px;border-radius:10px;border:1px dashed #cbd5e1"></div>
+  <div id="distSum" style="text-align:center;margin-top:10px;font-weight:800;font-size:11px"></div>
   `;
   document.getElementById('profitDistTable').innerHTML=html;
-  calcProfitPreview();
+  calcPreview();
 }
 
 function saveProfitConfig(){
   let desired=calcNumTotal(document.getElementById('desiredProfit')?.value||50);
-  let expected=calcNumTotal(document.getElementById('expectedSales')?.value||100000);
   let dist={};
   document.querySelectorAll('input[data-cat]').forEach(inp=>{ dist[inp.dataset.cat]=calcNumTotal(inp.value); });
-  localStorage.setItem('profitConfigTotal', JSON.stringify({desired, expected, dist}));
+  let old=JSON.parse(localStorage.getItem('profitConfigTotal')||'{}');
+  localStorage.setItem('profitConfigTotal', JSON.stringify({desired, expected: monthCashTotal, dist}));
   loadProfitConfig();
-  renderTotalTable();
 }
 
-function calcProfitPreview(){
+function calcPreview(){
   try{
     let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{}');
     let sum=Object.values(cfg.dist||{}).reduce((a,b)=>a+b,0);
     let el=document.getElementById('distSum');
-    if(el) el.innerHTML=`مجموع التوزيع: ${sum}% ${sum===100?'<span style="color:#16a34a">✓ تمام</span>':'<span style="color:#dc2626">لازم 100%</span>'} | اجمالي مبيعات الشهر الحالي كاش: ${monthCashTotal.toLocaleString()} جنيه (بدون انستا وفودافون)`;
+    if(el) el.innerHTML=`مجموع التوزيع: <span style="background:${sum===100?'#dcfce7':'#fee2e2'};padding:4px 10px;border-radius:20px">${sum}% ${sum===100?'✓':'لازم 100%'}</span> - محسوب تلقائي من مبيعات الشهر كاش بدون انستا وفودافون`;
   }catch(e){}
 }
 
-function goToDaily(dateKey){ localStorage.setItem('jumpToDate', dateKey); if(typeof showTab==='function') showTab('daily'); if(typeof renderDaily==='function') setTimeout(()=>renderDaily(),200); }
+function goToDaily(dateKey){ localStorage.setItem('jumpToDate', dateKey); if(typeof showTab==='function') showTab('daily'); }
 function goToSupplier(supName){ if(!supName||supName=='-') return; localStorage.setItem('supplierFilter', supName); if(typeof showTab==='function') showTab('qawaed'); }
 
 function renderTotalTable(){
@@ -166,11 +159,8 @@ function renderTotalTable(){
     let fromV=document.getElementById('totalFrom')?.value||'', toV=document.getElementById('totalTo')?.value||'';
     let fromD=parseDateForFilterTotal(fromV), toD=parseDateForFilterTotal(toV);
     const monthNames=['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'];
-
     let months={};
-    let sortedDates=Object.keys(dailyStore).sort((a,b)=>{ let da=parseDateForFilterTotal(a), db=parseDateForFilterTotal(b); if(!da||!db) return 0; return db-da; });
-
-    sortedDates.forEach(dateKey=>{
+    Object.keys(dailyStore).sort((a,b)=> parseDateForFilterTotal(b)-parseDateForFilterTotal(a)).forEach(dateKey=>{
       let d=parseDateForFilterTotal(dateKey); if(!d) return;
       if(fromD && d<fromD) return; if(toD && d>toD) return;
       let monthKey=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}`;
@@ -200,68 +190,61 @@ function renderTotalTable(){
 
     document.getElementById('monthTabs').innerHTML=monthKeys.map(m=>{
       let isActive=m===activeMonthTab?'active':'';
-      let label=monthNames[months[m].monthNum];
-      return `<div class="month-tab ${isActive}" onclick="activeMonthTab='${m}';localStorage.setItem('activeMonthTab','${m}');renderTotalTable()">${label}</div>`;
-    }).join('') || '<div style="font-size:11px">مفيش بيانات</div>';
+      return `<div class="month-tab ${isActive}" onclick="activeMonthTab='${m}';localStorage.setItem('activeMonthTab','${m}');renderTotalTable()">${monthNames[months[m].monthNum]}</div>`;
+    }).join('') || '<div>مفيش بيانات</div>';
 
-    // حساب المبيعات كاش فقط للشهر الحالي
     let rows=''; monthCashTotal=0; let totalCatActual={}; let totalInsta=0, totalVoda=0;
     let activeData=months[activeMonthTab]?.days||[];
     activeData.forEach(({dateKey, empRows, instaSum, vodaSum})=>{
       totalInsta+=instaSum; totalVoda+=vodaSum;
       Object.values(empRows).forEach(r=>{
         if(!r.emp &&!r.sup && r.shift==0 && r.diff==0 && r.val==0) return;
-        monthCashTotal+=r.shift; // كاش فقط
+        monthCashTotal+=r.shift;
         if(r.cat) totalCatActual[r.cat]=(totalCatActual[r.cat]||0)+r.val;
-        let safi=r.shift + r.diff - r.val; // الصافي بدون انستا وفودافون لانهم ربح صيدلية
-        let safiWithProfit = safi + (Object.keys(empRows).indexOf(Object.keys(empRows)[0])===0? 0 : 0); // هنسيبه كاش فقط
+        let safi=r.shift + r.diff - r.val;
         rows+=`<tr>
           <td onclick="goToDaily('${dateKey}')">${dateKey}</td>
-          <td onclick="goToDaily('${dateKey}')">${r.emp||'-'}</td>
-          <td onclick="goToDaily('${dateKey}')">${r.shift?r.shift.toLocaleString():'-'}</td>
-          <td style="${r.diff<0?'color:#dc2626':'color:#16a34a'}" onclick="goToDaily('${dateKey}')">${r.diff||0}</td>
-          <td onclick="event.stopPropagation();goToSupplier('${r.sup}')">${r.cat?`<span style="background:#f1f5f9;padding:3px 7px;border-radius:10px;font-size:9px">${r.cat}</span>`:''} ${r.val?r.val.toLocaleString():'-'}</td>
-          <td onclick="event.stopPropagation();goToSupplier('${r.sup}')">${r.sup||'-'}</td>
-          <td style="color:#7c3aed;font-weight:900" onclick="goToDaily('${dateKey}')">${instaSum?instaSum.toLocaleString()+' ↻ ربح': '-'}</td>
-          <td style="color:#dc2626;font-weight:900" onclick="goToDaily('${dateKey}')">${vodaSum?vodaSum.toLocaleString()+' ↻ ربح': '-'}</td>
-          <td class="safi" onclick="goToDaily('${dateKey}')">${safi.toLocaleString()}</td>
+          <td>${r.emp||'-'}</td>
+          <td><span style="background:#eff6ff;padding:4px 8px;border-radius:8px">${r.shift?r.shift.toLocaleString():'-'}</span></td>
+          <td style="${r.diff<0?'color:#dc2626':'color:#16a34a'}">${r.diff||0}</td>
+          <td onclick="event.stopPropagation();goToSupplier('${r.sup}')"><span style="font-size:9px;background:#f1f5f9;padding:3px 7px;border-radius:20px">${r.cat||''}</span> ${r.val?r.val.toLocaleString():'-'}</td>
+          <td>${r.sup||'-'}</td>
+          <td style="color:#7c3aed">${instaSum?instaSum.toLocaleString(): '-'}</td>
+          <td style="color:#dc2626">${vodaSum?vodaSum.toLocaleString(): '-'}</td>
+          <td class="safi">${safi.toLocaleString()}</td>
         </tr>`;
       });
     });
 
-    let cashLabel=document.getElementById('monthCashLabel');
-    if(cashLabel) cashLabel.textContent=`مبيعات ${activeMonthTab?monthNames[months[activeMonthTab].monthNum]:''} كاش: ${monthCashTotal.toLocaleString()} جنيه - انستا: ${totalInsta.toLocaleString()} - فودافون: ${totalVoda.toLocaleString()} (ارباح منفصلة)`;
-
-    // تحديث الفعلي
+    // تحديث الـ KPI والفعلي
     setTimeout(()=>{
-      try{
-        let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{}');
-        let desired=cfg.desired||50;
-        let expected=cfg.expected||100000;
-        let actualProfit=monthCashTotal*desired/100;
-        document.querySelectorAll('[data-actual]').forEach(td=>{
-          let k=td.getAttribute('data-actual');
-          if(k==='sales') td.textContent=monthCashTotal.toLocaleString();
-          if(k==='profit') td.textContent=actualProfit.toLocaleString();
-          if(k==='remaining') td.textContent=(monthCashTotal-actualProfit).toLocaleString();
-          if(totalCatActual[k]!==undefined) td.textContent=totalCatActual[k].toLocaleString();
-        });
-        document.querySelectorAll('[data-diff]').forEach(td=>{
-          let k=td.getAttribute('data-diff');
-          let valEl=document.querySelector(`[data-val="${k}"]`);
-          let actEl=document.querySelector(`[data-actual="${k}"]`);
-          if(valEl && actEl){
-            let ev=calcNumTotal(valEl.textContent);
-            let av=calcNumTotal(actEl.textContent);
-            let diff=av-ev;
-            td.textContent=(diff>0?'+':'')+diff.toLocaleString();
-            td.style.color=diff>0?'#dc2626':'#16a34a';
-          }
-        });
-      }catch(e){}
-      calcProfitPreview();
-    },150);
+      if(document.getElementById('autoSalesKPI')) document.getElementById('autoSalesKPI').textContent=monthCashTotal.toLocaleString();
+      let totalCatSum=Object.values(totalCatActual).reduce((a,b)=>a+b,0);
+      document.querySelectorAll('[data-actual]').forEach(td=>{
+        let k=td.getAttribute('data-actual');
+        if(k==='totalCat') td.textContent=totalCatSum.toLocaleString();
+        else if(totalCatActual[k]!==undefined) td.textContent=totalCatActual[k].toLocaleString();
+        else if(k!=='profit' && k!=='sales' && k!=='remaining' && k!=='totalCat') td.textContent='0';
+      });
+      document.querySelectorAll('[data-diff]').forEach(td=>{
+        let k=td.getAttribute('data-diff');
+        let valEl=document.querySelector(`[data-val="${k}"]`);
+        let actEl=document.querySelector(`[data-actual="${k}"]`);
+        if(k==='totalCat'){
+          let expectedVal=Object.values(document.querySelectorAll('[data-val]')).reduce((a,el)=>a+calcNumTotal(el.textContent),0);
+          let diff=totalCatSum-expectedVal;
+          td.textContent=(diff>0?'+':'')+diff.toLocaleString();
+          td.style.color=diff>0?'#dc2626':'#16a34a';
+        } else if(valEl && actEl){
+          let ev=calcNumTotal(valEl.textContent); let av=calcNumTotal(actEl.textContent); let diff=av-ev;
+          td.textContent=(diff>0?'+':'')+diff.toLocaleString();
+          td.style.color=diff>0?'#dc2626':'#16a34a';
+          if(Math.abs(diff)>0) td.style.background=diff>0?'#fee2e2':'#dcfce7';
+        }
+      });
+      calcPreview();
+    },100);
 
-    document.getElementById('totalTableCard').innerHTML=`<div class="glass"><b>📅 ${activeMonthTab?monthNames[months[activeMonthTab].monthNum]+' '+months[activeMonthTab].year:''} - الكاش فقط هو اللي داخل في المبيعات</b><div style="overflow:auto;max-height:70vh;margin-top:10px"><table><thead><tr><th>تاريخ اليوم</th><th>الموظف</th><th>قيمة الشيفت (كاش)</th><th>العجز/الزيادة</th><th>قيمة المورد [التصنيف]</th><th>اسم مورد</th><th>انستا (ربح)</th><th>فودافون (ربح)</th><th>الصافي كاش</th></tr></thead><tbody>${rows||'<tr><td colspan=9>مفيش بيانات</td></tr>'}</tbody></table></div></div>`;
+    document.getElementById('totalTableCard').innerHTML=`<div class="glass"><div style="display:flex;justify-content:space-between"><b>📅 ${activeMonthTab?monthNames[months[activeMonthTab].monthNum]+' '+months[activeMonthTab].year:''} - كاش فقط: ${monthCashTotal.toLocaleString()} جنيه</b><span style="font-size:10px;color:#64748b">انستا ${totalInsta.toLocaleString()} + فودافون ${totalVoda.toLocaleString()} ارباح منفصلة</span></div><div style="overflow:auto;max-height:70vh;margin-top:12px;border-radius:14px;border:1px solid #eef2f7"><table><thead><tr><th>التاريخ</th><th>الموظف</th><th>الشيفت كاش</th><th>العجز</th><th>المورد [تصنيف]</th><th>اسم مورد</th><th>انستا</th><th>فودافون</th><th>الصافي كاش</th></tr></thead><tbody>${rows||'<tr><td colspan=9>مفيش بيانات</td></tr>'}</tbody></table></div></div>`;
   }catch(e){ console.error(e); document.getElementById('totalTableCard').innerHTML='Error: '+e.message; }
 }
