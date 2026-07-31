@@ -1,19 +1,19 @@
+// ===== Omar Pharmacy System - ONLINE SYNC v2 - Firebase + Sheet Mirror =====
+import { GOOGLE_SHEET_WEBAPP_URL } from "./firebase-config.js";
 
-// ===== Omar Pharmacy System - ONLINE SYNC v1 =====
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxN4dJfdFCtDSiu6VXAvB2hxb2CsATxZk-EXe0_FRh8GstNjWYaDonuCpNilO6_J5Q7AA/exec";
+const GOOGLE_SHEET_URL = GOOGLE_SHEET_WEBAPP_URL;
 
-// ==== دالة الربط مع جوجل شيت ====
+// ==== دالة الربط مع جوجل شيت (مراية فقط - بتكمل، مش بتمسح) ====
 async function saveToSheet(type, payload){
   try{
-    // نستخدم no-cors عشان جوجل شيت
     await fetch(GOOGLE_SHEET_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({type: type, ...payload})
+      body: JSON.stringify(payload)
     });
     console.log("✅ اتبعت لـ Google Sheet:", type);
-    showToastOnline("☁️ اتحفظت اونلاين");
+    showToastOnline("☁ اتحفظ في السحابة + الشيت");
   }catch(e){ console.log("Sheet error", e); }
 }
 
@@ -24,20 +24,6 @@ function showToastOnline(msg){
   t.style.cssText=`position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#0f766e;color:#fff;padding:8px 16px;border-radius:20px;font-weight:800;font-size:11px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.2)`;
   setTimeout(()=>t.remove(),2000);
 }
-
-// ===== استيراد السنة تلقائي (151 يوم) - يحمل مرة واحدة بس =====
-(async function(){
-  try{
-    if(!localStorage.getItem('dailyStore')){
-      let r = await fetch('dailyStore_FINAL_2026.json');
-      if(r.ok){
-        let data = await r.json();
-        localStorage.setItem('dailyStore', JSON.stringify(data));
-        console.log('✅ تم استيراد '+Object.keys(data).length+' يوم');
-      }
-    }
-  }catch(e){ console.log('استيراد السنة:', e); }
-})();
 
 function showTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
@@ -66,41 +52,54 @@ function showTop(mode){
     let pharmSection = document.getElementById('pharmacyApp');
     let privSection = document.getElementById('privateApp');
     if(pharmSection && privSection){
-        pharmSection.style.display = mode==='pharmacy' ? 'block' : 'none';
-        privSection.style.display = mode==='private' ? 'block' : 'none';
+        pharmSection.style.display = mode==='pharmacy'? 'block' : 'none';
+        privSection.style.display = mode==='private'? 'block' : 'none';
     }
     document.querySelectorAll('.top-btn').forEach(b=>b.classList.remove('active'));
     let topBtn = document.querySelector(`[data-top="${mode}"]`);
     if(topBtn) topBtn.classList.add('active');
-    if(mode==='pharmacy'){ showTab('daily'); } 
+    if(mode==='pharmacy'){ showTab('daily'); }
     else { if(typeof renderPrivate==='function') renderPrivate(); }
 }
 
-// ===== Override دوال الحفظ الأصلية عشان تبعت اونلاين =====
-const originalSaveDaily = typeof saveDaily !== 'undefined' ? saveDaily : null;
+// ===== Override دوال الحفظ الأصلية عشان تبعت Firebase + Sheet =====
+const originalSaveDaily = typeof saveDaily!== 'undefined'? saveDaily : null;
 window.saveDaily = function(){
   if(originalSaveDaily) originalSaveDaily();
-  // ابعت لليومية
   try{
     let k = document.getElementById('dailyDateInput')?.value;
-    if(k && typeof dailyStore !== 'undefined' && dailyStore[k]){
-      saveToSheet("daily", {date: k, data: dailyStore[k]});
+    if(k && typeof dailyStore!== 'undefined' && dailyStore[k]){
+      let d = dailyStore[k];
+      // نبعت بنفس تنسيق الشيت القديم - هيكمل تحت
+      saveToSheet("daily", {
+        date: k,
+        emp: d.emp || d.employee || "",
+        shift: d.shift || 0,
+        diff: d.diff || 0,
+        val: d.val || d.value || 0,
+        sup: d.sup || d.supplier || "",
+        insta: d.insta || 0,
+        voda: d.voda || 0
+      });
     }
-  }catch(e){}
+  }catch(e){ console.log(e); }
 }
 
-const originalSavePurch = typeof savePurch !== 'undefined' ? savePurch : null;
+const originalSavePurch = typeof savePurch!== 'undefined'? savePurch : null;
 window.savePurch = function(){
   if(originalSavePurch) originalSavePurch();
   try{
-    let last = purchaseStore && purchaseStore.length ? purchaseStore[purchaseStore.length-1] : {};
-    saveToSheet("purchases", {
-      supplier: last.supplier || "عام",
-      date: last.date || new Date().toLocaleDateString('ar-EG'),
-      purch: last.value || 0,
-      retPurch: 0, notif:0, sales:0, retSales:0, payments:0,
-      safi: last.value || 0
-    });
+    let last = typeof purchaseStore!== 'undefined' && purchaseStore.length? purchaseStore[purchaseStore.length-1] : {};
+    if(last && last.value){
+      saveToSheet("purchases", {
+        date: last.date || new Date().toLocaleDateString('ar-EG'),
+        emp: "مشتريات",
+        shift: 0, diff: 0,
+        val: last.value || 0,
+        sup: last.supplier || "عام",
+        insta: 0, voda: 0
+      });
+    }
   }catch(e){}
 }
 
@@ -130,5 +129,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     showTop('pharmacy');
-    console.log("☁️ Omar Online Sync Active - Sheet Linked");
+    console.log("☁ Omar Online Sync v2 Active - Firebase + Sheet Mirror");
 });
