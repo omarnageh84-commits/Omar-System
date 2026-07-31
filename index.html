@@ -12,6 +12,8 @@
        .tab-content.active { display: block !important; }
        #daily,#total,#purchases,#sales,#database { display:none; }
        #daily.active,#total.active,#purchases.active,#sales.active,#database.active { display:block !important; }
+       .btn-export-all{ background:#0f172a; color:#fff; border:none; padding:7px 14px; border-radius:10px; font-weight:800; cursor:pointer; margin:8px; float:left; }
+       .btn-export-all:hover{ background:#1e293b; }
     </style>
 </head>
 <body>
@@ -39,33 +41,29 @@
         <div id="privateApp" style="display:none;"><div id="private"></div></div>
     </div>
 
-    <!-- الاساسيات العادية -->
-    <script src="js/pharmacy/googleSync.js?v=7"></script>
-    <script src="js/pharmacy/daily.js?v=7"></script>
-    <script src="js/pharmacy/total.js?v=7"></script>
-    <script src="js/pharmacy/purchases.js?v=7"></script>
-    <script src="js/pharmacy/sales.js?v=7"></script>
-    <script src="js/pharmacy/database.js?v=7"></script>
-    <script src="js/pharmacy/actions.js?v=7"></script>
-    <script src="js/private/private.js?v=7"></script>
-    <script src="js/private/masrofaty.js?v=7"></script>
-    <script src="js/private/dyon.js?v=7"></script>
-    <script src="js/private/hodor.js?v=7"></script>
-    <script src="js/private/notes.js?v=7"></script>
-    <script src="js/export.js?v=7"></script>
+    <!-- الاساسيات -->
+    <script src="js/pharmacy/googleSync.js?v=8"></script>
+    <script src="js/pharmacy/daily.js?v=8"></script>
+    <script src="js/pharmacy/total.js?v=8"></script>
+    <script src="js/pharmacy/purchases.js?v=8"></script>
+    <script src="js/pharmacy/sales.js?v=8"></script>
+    <script src="js/pharmacy/database.js?v=8"></script>
+    <script src="js/pharmacy/actions.js?v=8"></script>
+    <script src="js/private/private.js?v=8"></script>
+    <script src="js/private/masrofaty.js?v=8"></script>
+    <script src="js/private/dyon.js?v=8"></script>
+    <script src="js/private/hodor.js?v=8"></script>
+    <script src="js/private/notes.js?v=8"></script>
+    <script src="js/export.js?v=8"></script>
 
-    <!-- الفايربيس لازم يكون module -->
-    <script type="module" src="firebase-config.js?v=7"></script>
-    <script type="module" src="app.js?v=7"></script>
+    <!-- الفايربيس module -->
+    <script type="module" src="firebase-config.js?v=8"></script>
+    <script type="module" src="app.js?v=8"></script>
 
     <script>
         function showTab(name) {
-            // اهم سطر اتصلح هنا - كان ناقص مسافة
-            document.querySelectorAll('#pharmacyApp .tab-content').forEach(el => {
-                el.classList.remove('active');
-            });
+            document.querySelectorAll('#pharmacyApp .tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-
             let target = document.getElementById(name);
             if (target) target.classList.add('active');
             document.querySelector(`[data-tab="${name}"]`)?.classList.add('active');
@@ -75,6 +73,9 @@
             if (name === 'purchases' && typeof renderPurchases === 'function') renderPurchases();
             if (name === 'sales' && typeof renderSales === 'function') renderSales();
             if (name === 'database' && typeof renderDatabase === 'function') renderDatabase();
+
+            // زرار التصدير يظهر في كل تاب
+            if(typeof addExportButtons==='function') setTimeout(addExportButtons, 150);
         }
 
         function showTop(mode) {
@@ -98,6 +99,7 @@
         window.addEventListener('load', async () => {
             if (typeof fetchSheetData === 'function') await fetchSheetData();
             showTop('pharmacy');
+            if(typeof addExportButtons==='function') setTimeout(addExportButtons, 500);
         });
     </script>
 </body>
