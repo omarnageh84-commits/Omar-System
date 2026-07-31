@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Omar System</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/pharmacy.css">
 <link rel="stylesheet" href="css/private.css">
+<link rel="stylesheet" href="css/mobile-fix.css?v=27">
 <style>
 .tab-content{display:none}.tab-content.active{display:block}
 #unified-all-global{position:fixed;bottom:20px;left:20px;z-index:999999;background:#7c3aed;color:#fff;border:none;padding:12px 22px;border-radius:30px;font-weight:900;cursor:pointer;box-shadow:0 8px 20px rgba(124,58,237,.4)}
+/* فكس اضافي جوه الصفحة عشان الموبايل يبان حتى لو ملف css اتأخر */
+@media(max-width:768px){
+ .app-container{padding:6px!important}
+ .content{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  table{min-width:600px!important}
+}
 </style>
 </head>
 <body>
@@ -38,23 +45,23 @@
 <button id="unified-all-global" onclick="unifiedExportAll()">📦 تصدير كله XLSX</button>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/pharmacy/googleSync.js?v=26"></script>
-<script src="js/pharmacy/daily.js?v=26"></script>
-<script src="js/pharmacy/total.js?v=26"></script>
-<script src="js/pharmacy/purchases.js?v=26"></script>
-<script src="js/pharmacy/sales.js?v=26"></script>
-<script src="js/pharmacy/database.js?v=26"></script>
-<script src="js/pharmacy/actions.js?v=26"></script>
-<script src="js/private/private.js?v=26"></script>
-<script src="js/private/masrofaty.js?v=26"></script>
-<script src="js/private/dyon.js?v=26"></script>
-<script src="js/private/hodor.js?v=26"></script>
-<script src="js/private/notes.js?v=26"></script>
-<script type="module" src="firebase-config.js?v=26"></script>
-<script type="module" src="app.js?v=26"></script>
+<script src="js/pharmacy/googleSync.js?v=27"></script>
+<script src="js/pharmacy/daily.js?v=27"></script>
+<script src="js/pharmacy/total.js?v=27"></script>
+<script src="js/pharmacy/purchases.js?v=27"></script>
+<script src="js/pharmacy/sales.js?v=27"></script>
+<script src="js/pharmacy/database.js?v=27"></script>
+<script src="js/pharmacy/actions.js?v=27"></script>
+<script src="js/private/private.js?v=27"></script>
+<script src="js/private/masrofaty.js?v=27"></script>
+<script src="js/private/dyon.js?v=27"></script>
+<script src="js/private/hodor.js?v=27"></script>
+<script src="js/private/notes.js?v=27"></script>
+<script type="module" src="firebase-config.js?v=27"></script>
+<script type="module" src="app.js?v=27"></script>
 
 <script>
-// === V26 عربي مرتب ومتفكك ===
+// === V27 عربي مرتب + موبايل ===
 function getStore(n){try{let v=localStorage.getItem(n);if(v)return JSON.parse(v);}catch(e){}return null;}
 function deepParse(v){try{if(typeof v==='string'){let t=v.trim();if(t.startsWith('{')||t.startsWith('['))return JSON.parse(t);}}catch(e){}return v;}
 function normalize(s){
@@ -97,7 +104,7 @@ window.unifiedExportAll=function(){
    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rp),'2- المشتريات');
   }
 
-  // 3+4- الخاص مصروفاتي والديون من privateStore
+  // 3+4- الخاص مصروفاتي والديون
   let pStore=getStore('privateStore');
   if(pStore){
     let list=normalize(pStore);
@@ -117,7 +124,7 @@ window.unifiedExportAll=function(){
     }
   }
 
-  // 5- المرتبات والدخل
+  // 5- المرتبات
   let sal=getStore('masrofatySalary');
   if(sal){
     let arr=normalize(sal);
@@ -139,7 +146,7 @@ window.unifiedExportAll=function(){
     }
   }
 
-  // 7- المصاريف الثابتة - كان بيطلع JSON - دلوقتي بيتفك
+  // 7- المصاريف الثابتة - مفكوكة
   let fixed=getStore('monthlyFixed_v16')||getStore('monthlyFixed_v3');
   if(fixed){
     let arr=normalize(fixed);
@@ -150,7 +157,7 @@ window.unifiedExportAll=function(){
     }
   }
 
-  // 8- الموردين
+  // 8+9- الموردين والموظفين
   let db=getStore('dbStore')||{};
   if(db.suppliers?.length){
    let r=[['اسم المورد','التصنيف']]; db.suppliers.forEach(s=>r.push([s.name||'',s.category||'']));
