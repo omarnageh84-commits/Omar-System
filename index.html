@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/private.css">
 <style>
 .tab-content{display:none}.tab-content.active{display:block}
-#unified-all-global{position:fixed;bottom:20px;left:20px;z-index:999999;background:#7c3aed;color:#fff;border:none;padding:12px 22px;border-radius:30px;font-weight:900;cursor:pointer}
+#unified-all-global{position:fixed;bottom:20px;left:20px;z-index:999999;background:#7c3aed;color:#fff;border:none;padding:12px 22px;border-radius:30px;font-weight:900;cursor:pointer;box-shadow:0 8px 20px rgba(124,58,237,.4)}
 </style>
 </head>
 <body>
@@ -38,28 +38,30 @@
 <button id="unified-all-global" onclick="unifiedExportAll()">📦 تصدير كله XLSX</button>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/pharmacy/googleSync.js?v=18"></script>
-<script src="js/pharmacy/daily.js?v=18"></script>
-<script src="js/pharmacy/total.js?v=18"></script>
-<script src="js/pharmacy/purchases.js?v=18"></script>
-<script src="js/pharmacy/sales.js?v=18"></script>
-<script src="js/pharmacy/database.js?v=18"></script>
-<script src="js/pharmacy/actions.js?v=18"></script>
-<script src="js/private/private.js?v=18"></script>
-<script src="js/private/masrofaty.js?v=18"></script>
-<script src="js/private/dyon.js?v=18"></script>
-<script src="js/private/hodor.js?v=18"></script>
-<script src="js/private/notes.js?v=18"></script>
-<script type="module" src="firebase-config.js?v=18"></script>
-<script type="module" src="app.js?v=18"></script>
+<script src="js/pharmacy/googleSync.js?v=19"></script>
+<script src="js/pharmacy/daily.js?v=19"></script>
+<script src="js/pharmacy/total.js?v=19"></script>
+<script src="js/pharmacy/purchases.js?v=19"></script>
+<script src="js/pharmacy/sales.js?v=19"></script>
+<script src="js/pharmacy/database.js?v=19"></script>
+<script src="js/pharmacy/actions.js?v=19"></script>
+<script src="js/private/private.js?v=19"></script>
+<script src="js/private/masrofaty.js?v=19"></script>
+<script src="js/private/dyon.js?v=19"></script>
+<script src="js/private/hodor.js?v=19"></script>
+<script src="js/private/notes.js?v=19"></script>
+<script type="module" src="firebase-config.js?v=19"></script>
+<script type="module" src="app.js?v=19"></script>
 
 <script>
-// === التصدير هنا جوة الصفحة - مش محتاج ملف خارجي ===
+// === V19 تصدير الصيدلية + الخاص كله - مكان واحد بس ===
 function getStore(n){try{let v=localStorage.getItem(n);if(v)return JSON.parse(v);}catch(e){}return null;}
 window.unifiedExportAll=function(){
  try{
   if(typeof XLSX==='undefined'){alert('استنى ثانيتين المكتبة بتحمل');return;}
   let wb=XLSX.utils.book_new();
+
+  // 1- اليومية
   let store=getStore('dailyStore')||{};
   let rows=[['التاريخ','الموظف','الشيفت','العجز','القيمة','المورد']];
   Object.keys(store).forEach(dateKey=>{
@@ -78,15 +80,68 @@ window.unifiedExportAll=function(){
    });
    Object.values(empRows).forEach(r=>{if(r.emp||r.val)rows.push([dateKey,r.emp,r.shift,r.diff,r.val,r.sup]);});
   });
-  if(rows.length<=1){alert('مفيش داتا');return;}
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'اليومية - 211 يوم');
+  if(rows.length>1) XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'اليومية - 211 يوم');
+
+  // 2- المشتريات
   let purch=getStore('purchaseStore')||[];
   if(purch.length){
    let rp=[['التاريخ','المورد','النوع','الدفع','القيمة']];
    purch.forEach(x=>rp.push([x.date||'',x.supplier||'',x.type||'',x.pay||'',x.value||'']));
    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rp),'المشتريات');
   }
-  XLSX.writeFile(wb,'Omar-System-'+new Date().toISOString().slice(0,10)+'.xlsx');
+
+  // 3- المبيعات للمخزن
+  let sales=getStore('salesStore')||getStore('zakhStore')||[];
+  if(sales.length){
+    let arr=Array.isArray(sales)?sales:Object.values(sales);
+    let rp=[['البيانات']];
+    if(arr.length && typeof arr[0]==='object'){
+      let h=Object.keys(arr[0]); rp=[h]; arr.forEach(o=>rp.push(h.map(k=>o[k]||'')));
+    } else { arr.forEach(v=>rp.push([v])); }
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rp),'المبيعات للمخزن');
+  }
+
+  // 4- قواعد البيانات
+  let db=getStore('dbStore')||{};
+  if(db.suppliers?.length){
+   let r=[['المورد','التصنيف']]; db.suppliers.forEach(s=>r.push([s.name||'',s.category||'']));
+   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'الموردين');
+  }
+  if(db.employees?.length){
+   let r=[['الموظفون']]; db.employees.forEach(e=>r.push([e.name||e||'']));
+   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'الموظفون');
+  }
+  if(db.asnaf?.length){
+   let r=[['الصنف','السعر']]; db.asnaf.forEach(a=>r.push([a.name||'',a.price||'']));
+   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'الاصناف');
+  }
+
+  // 5- الخاص كله
+  const privateMap = {
+    'مصروفاتي':'masrofatyStore',
+    'الديون':'dyonStore',
+    'الحضور والانصراف':'hodorStore',
+    'الملاحظات':'notesStore'
+  };
+  Object.entries(privateMap).forEach(([sheetName, key])=>{
+    let s=getStore(key); if(!s) return;
+    let arr=Array.isArray(s)?s:Object.values(s);
+    if(!arr.length) return;
+    // لو شكلها جدول يومية حضور
+    if(arr[0]?.date || arr[0]?.day){
+      let h=Object.keys(arr[0]); let r=[h]; arr.forEach(o=>r.push(h.map(k=>o[k]||'')));
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),sheetName.slice(0,31));
+    } else if(arr[0]?.id && arr[0]?.val!==undefined){
+      let r=[['id','القيمة']]; arr.forEach(o=>r.push([o.id||'',o.val||'']));
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),sheetName.slice(0,31));
+    } else if(typeof arr[0]==='object'){
+      let h=Object.keys(arr[0]); let r=[h]; arr.forEach(o=>r.push(h.map(k=>o[k]||'')));
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),sheetName.slice(0,31));
+    }
+  });
+
+  if(!wb.SheetNames.length){alert('مفيش داتا تتصدر');return;}
+  XLSX.writeFile(wb,'Omar-System-كامل-'+new Date().toISOString().slice(0,10)+'.xlsx');
  }catch(e){alert('خطأ: '+e.message);console.error(e);}
 };
 
