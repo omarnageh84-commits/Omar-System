@@ -1,25 +1,12 @@
-
-/* === موبايل فكس V26 - عمر === */
 @media (max-width: 768px){
-  .app-container{padding:8px !important}
-  .top-switch{display:flex;gap:8px}
-  .top-btn{flex:1;font-size:14px;padding:10px !important}
-  .nav-bar{display:flex;flex-wrap:wrap;gap:6px}
-  .nav-tab{flex:1 1 45%;font-size:12px !important;padding:8px !important;text-align:center}
-  
-  /* الجدول يبقى سكرول */
-  .content{overflow-x:auto !important}
-  #daily, #total, #purchases, #sales, #database{overflow-x:auto}
-  table{min-width:650px !important}
-  table th, table td{font-size:12px !important;padding:6px 4px !important;white-space:nowrap}
-
-  /* الازرار اللي فوق */
-  button{font-size:13px !important}
-  #unified-all-global{bottom:10px !important;left:10px !important;right:10px !important;width:auto !important;border-radius:12px !important;padding:14px !important;text-align:center}
-
-  /* الخاص */
-  #privateApp input, #privateApp select{font-size:14px !important}
+ .app-container{padding:8px!important}
+ .top-switch{display:flex;gap:8px}
+ .top-btn{flex:1;font-size:14px;padding:10px!important}
+ .nav-bar{display:flex;flex-wrap:wrap;gap:6px}
+ .nav-tab{flex:1 1 45%;font-size:12px!important;padding:8px!important;text-align:center}
+ .content{overflow-x:auto!important}
+  table{min-width:650px!important}
+  table th, table td{font-size:12px!important;padding:6px 4px!important;white-space:nowrap}
+  #unified-all-global{bottom:10px!important;left:10px!important;right:10px!important;width:auto!important;border-radius:12px!important;padding:14px!important;text-align:center}
 }
-@media (max-width: 480px){
-  .nav-tab{flex:1 1 100%}
-}
+@media (max-width: 480px){.nav-tab{flex:1 1 100%} }
