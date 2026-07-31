@@ -1,250 +1,177 @@
-// ==================== الاجمالي - احترافي جدا - مبيعات من اجمالي البيع كاش ====================
-let activeMonthTab = localStorage.getItem('activeMonthTab') || null;
-let monthCashTotal = 0;
+// total.js V5 ULTRA PRO + النسب رجعت - شكل احترافي
+let selectedMonthKey = 'all'; let currentPage = 1; const PAGE_SIZE = 40;
+let _cache = null, _monthsMap = null; let _activeCatFilter = 'الكل';
+const AR_MONTHS = ['يناير', 'فبراير', 'مارس', 'ابريل', 'مايو', 'يونيو', 'يوليو', 'اغسطس', 'سبتمبر', 'اكتوبر', 'نوفمبر', 'ديسمبر'];
+window.FINAL_CATS_TASNEF = window.FINAL_CATS_TASNEF || ["دواء", "كوزمتكس", "مصاريف"];
+let _lastData = { expensesByCat: {}, expensesBySupplier: {}, list: [], totalSales: 0, trend: {} };
+
+function parseDate(s) { if (!s) return null; let p = s.split('/'); if (p.length !== 3) return null; let d = new Date(+p[2], +p[1] - 1, +p[0]); return isNaN(d) ? null : d; }
+function calcNum(v) { if (v == null) return 0; let e = (v + '').replace(/,/g, '').replace(/٫/g, '.').trim(); if (!e) return 0; let n = parseFloat(e); return isNaN(n) ? 0 : n; }
+function getMonthKey(d) { return `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`; }
+function getMonthNameOnly(k) { if (!k) return 'الكل'; let [m] = k.split('/'); return AR_MONTHS[+m - 1] || k; }
+function toArray(d) { if (!d) return []; if (Array.isArray(d)) return d; if (typeof d === 'object') return Object.values(d); return []; }
+function getTasnefMap() { try { let db = JSON.parse(localStorage.getItem('dbStore') || '{}'); let m = {}; (db.tasnef || []).forEach(t => { let n = (t.name || "").trim(); if (n) m[n] = (t.category || "دواء").trim(); }); return m; } catch { return {}; } }
+function getCategoryForSupplier(s, map) { if (!s) return 'غير مصنف'; let t = s.trim(); if (map[t]) return map[t]; for (let k in map) { if (t.includes(k) || k.includes(t)) return map[k]; } return 'دواء'; }
 
 function renderTotal() {
-  let el = document.getElementById('total'); if (!el) return;
-  el.innerHTML = `<div id="total-wrap">
+  let c = document.getElementById('total'); if (!c) return;
+  if (document.getElementById('total-wrap')) { buildCache(); renderBar(); renderTable(); return; }
+  c.innerHTML = `
+  <div id="total-wrap">
     <style>
-   .glass{background:#fff;border-radius:18px;padding:16px;margin-bottom:16px;border:1px solid #eef2f7;box-shadow:0 6px 18px rgba(15,23,42,.06)}
-   .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-   .filters input{padding:8px 12px;border-radius:12px;border:1.5px solid #e2e8f0;font-size:11px;font-weight:700}
-   .filters button{padding:9px 16px;border:none;border-radius:12px;font-weight:800;font-size:11px;cursor:pointer;color:#fff;transition:.2s}
-   .month-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-   .month-tab{padding:10px 20px;border-radius:24px;border:1.5px solid #e2e8f0;background:#fff;font-weight:900;font-size:12px;cursor:pointer}
-   .month-tab.active{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 6px 14px rgba(0,0,0,.15)}
-    table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;overflow:hidden;border-radius:14px}
-    th{background:#0f172a;color:#fff;padding:14px 8px;font-size:11px;text-align:center;font-weight:900}
-    td{padding:12px 6px;text-align:center;border-bottom:1px solid #f1f5f9;font-weight:700;background:#fff}
-    tr:last-child td{border-bottom:none}
-   .safi{background:#0f172a;color:#fff;border-radius:10px;font-weight:900}
-   .profit-input{width:64px;padding:6px;border-radius:10px;border:1.5px solid #cbd5e1;text-align:center;font-weight:900}
-   .kpi-card{flex:1;min-width:140px;background:linear-gradient(135deg,#f8fafc,#fff);border:1px solid #e2e8f0;border-radius:14px;padding:12px;text-align:center}
-   .kpi-card b{display:block;font-size:18px;margin-top:4px}
-   .badge{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;display:inline-block}
+.months-scroll{display:flex;gap:6px;overflow-x:auto;padding:8px 4px;white-space:nowrap}
+.m-tab{flex:0 0 auto;padding:7px 16px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;font-weight:800;font-size:11px;cursor:pointer}
+.m-tab.active{background:#0f172a;color:#fff}
+.kpi-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.kpi{flex:1;min-width:140px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.kpi b{font-size:16px}
+.cat-pills{display:flex;gap:6px;margin:8px 0}
+.cat-pill{padding:6px 14px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;font-weight:800;font-size:11px;cursor:pointer}
+.cat-pill.active{background:#0f172a;color:#fff}
+.ultra-grid{display:grid;grid-template-columns:1.2fr.8fr;gap:12px;margin-top:12px}
+@media(max-width:1100px){.ultra-grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden}
+.card-h{padding:10px 12px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}.tbl th{background:#f8fafc;padding:8px;color:#64748b;position:sticky;top:0}.tbl td{padding:8px;text-align:center;border-bottom:1px solid #f1f5f9}
+.row-day{cursor:pointer}.row-day:hover{background:#f0f9ff!important}
+.bar-bg{height:6px;background:#f1f5f9;border-radius:10px;overflow:hidden}.bar-f{height:100%;border-radius:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10000;padding:12px}.modal.show{display:flex}.modal-box{background:#fff;border-radius:18px;width:95vw;max-width:1000px;max-height:90vh;overflow:auto}
+.search{width:100%;padding:8px 12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:12px}
+.mini-input{width:52px;padding:4px 6px;border:1.5px solid #cbd5e1;border-radius:8px;font-weight:800;text-align:center;font-size:12px;background:#f8fafc}
+.pro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+@media(max-width:900px){.pro-grid{grid-template-columns:1fr}}
     </style>
+    <div id="monthsBar" class="months-scroll"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin:6px 0;flex-wrap:wrap"><span id="monthSummary" style="font-weight:800;font-size:11px"></span><div style="margin-right:auto;display:flex;gap:6px"><input id="supSearch" class="search" style="width:200px" placeholder="🔍 ابحث مورد..." oninput="filterSuppliers()"><button onclick="exportExcel()" style="background:#0f172a;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-weight:800">📥 اكسل</button><button onclick="_cache=null;_monthsMap=null;buildCache();renderTable()" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:6px 10px">🔄</button></div></div>
 
-    <div class="glass">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-        <div style="display:flex;gap:10px;align-items:center">
-          <div style="width:42px;height:42px;background:linear-gradient(135deg,#0f172a,#334155);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff">📊</div>
-          <div><div style="font-weight:900;font-size:14px">توزيع الارباح - حسب التصنيف</div><div style="font-size:10px;color:#64748b">المبيعات = اجمالي بيع الشهر كاش فقط (قيمة الشيفت) - انستا وفودافون ارباح منفصلة للصيدلية</div></div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div class="kpi-card" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe">
-            <span style="font-size:10px;color:#1e40af">مبيعات الشهر كاش</span>
-            <b id="autoSalesKPI" style="color:#1e40af">0</b>
-            <span style="font-size:9px;color:#64748b">من اجمالي البيع</span>
-          </div>
-          <div class="kpi-card" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#bbf7d0">
-            <span style="font-size:10px;color:#166534">نسبة الربح المطلوبة %</span>
-            <input id="desiredProfit" type="number" class="profit-input" style="width:70px;margin-top:6px;font-size:14px" oninput="saveProfitConfig()">
-          </div>
-          <button onclick="saveProfitConfig();renderTotalTable()" style="background:#0f172a;padding:10px 16px;border-radius:12px;color:#fff;font-weight:900">تحديث</button>
-        </div>
-      </div>
-      <div id="profitDistTable" style="margin-top:14px;overflow:auto"></div>
+    <div id="proStats"></div>
+
+    <div class="ultra-grid">
+      <div class="card"><div class="card-h"><span>🏆 الموردين - حسب الفلتر</span><span id="supCount" style="background:#f1f5f9;padding:3px 8px;border-radius:20px;font-size:10px"></span></div><div style="max-height:420px;overflow:auto"><table class="tbl"><thead><tr><th style="text-align:right">المورد</th><th>الفئة</th><th>القيمة</th><th style="width:120px">نسبة</th></tr></thead><tbody id="supTbody"></tbody></table></div></div>
+      <div class="card"><div class="card-h"><span>📈 تطور الشراء يوميا</span></div><div style="max-height:420px;overflow:auto"><table class="tbl"><thead><tr><th>التاريخ</th><th>دواء</th><th>كوزمتكس</th><th>مصاريف</th><th>الاجمالي</th></tr></thead><tbody id="dailyTrend"></tbody></table></div></div>
     </div>
 
-    <div class="glass">
-      <div class="filters">
-        <input id="totalFrom" placeholder="من تاريخ" onblur="this.value=parseDateSmartTotal(this.value);renderTotalTable()">
-        <input id="totalTo" placeholder="إلى تاريخ" onblur="this.value=parseDateSmartTotal(this.value);renderTotalTable()">
-        <button onclick="clearTotalFilters()" style="background:#64748b">مسح الفلتر</button>
-        <button onclick="fetchSheetData()" style="background:#16a34a">🔄 مزامنة من الشيت</button>
-        <button onclick="exportTotalExcel()" style="background:#0f172a">📥 تصدير Excel</button>
-      </div>
-      <div id="monthTabs" class="month-tabs" style="margin-top:12px"></div>
-      <div id="totalTableCard" style="margin-top:10px"></div>
-    </div>
+    <div class="card" style="margin-top:12px"><div class="card-h"><span>📋 تفاصيل اليومية (دوس لفتح اليوم)</span><div class="cat-pills" id="catPills"></div></div><div id="totalTableCard" style="max-height:45vh;overflow:auto"></div><div id="totalPager" style="display:flex;gap:5px;justify-content:center;padding:8px"></div></div>
+    <div id="drillModal" class="modal" onclick="if(event.target===this)closeDrill()"><div class="modal-box" id="drillBox"></div></div>
   </div>`;
-  loadProfitConfig();
-  renderTotalTable();
+  buildCache(); renderBar(); renderTable();
 }
-
-function parseDateSmartTotal(v){ if(!v) return ''; v=v.trim().replace(/-/g,'/'); let p=v.split('/'); let y=new Date().getFullYear(); if(p.length==2) return p[0]+'/'+p[1]+'/'+y; if(p.length==3){ if(p[2].length==2) p[2]='20'+p[2]; return p.join('/'); } return v; }
-function parseDateForFilterTotal(s){ if(!s) return null; let p=s.split('/'); if(p.length!==3) return null; return new Date(p[2],p[1]-1,p[0]); }
-function calcNumTotal(v){ try{ if(!v) return 0; let e=(v+'').toString().replace(/,/g,'').trim(); if(/[\+\-\*\/]/.test(e)) return Function('"use strict";return ('+e+')')(); return parseFloat(e)||0; }catch{ return 0; } }
-function clearTotalFilters(){ let a=document.getElementById('totalFrom'), b=document.getElementById('totalTo'); if(a) a.value=''; if(b) b.value=''; renderTotalTable(); }
-function exportTotalExcel(){ let html=document.getElementById('totalTableCard').innerHTML; let blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel'}); let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='الاجمالي_'+(activeMonthTab||'')+'.xls'; a.click(); }
-
-function getSupplierClassifications(){
-  let cats=new Set();
-  ['suppliers','suppliersStore','db_suppliers'].forEach(k=>{
-    try{ let raw=localStorage.getItem(k); if(!raw) return; let data=JSON.parse(raw); if(Array.isArray(data)) data.forEach(o=>{ let c=o?.category||o?.التصنيف; if(c) cats.add(c.toString().trim()); }); }catch(e){}
+function buildCache() { if (_cache && _monthsMap) return; let store = {}; try { store = JSON.parse(localStorage.getItem('dailyStore') || '{}'); } catch { } let all = [], map = {}; for (let k in store) { let d = parseDate(k); if (!d) continue; all.push({ k, d, data: store[k] }); let mk = getMonthKey(d); if (!map[mk]) map[mk] = { key: mk, items: [] }; map[mk].items.push({ k, d, data: store[k] }); } all.sort((a, b) => a.d - b.d); Object.values(map).forEach(g => g.items.sort((a, b) => a.d - b.d)); _cache = all; _monthsMap = map; }
+function renderBar() {
+  let bar = document.getElementById('monthsBar'); if (!bar || !_monthsMap) return;
+  let keys = Object.keys(_monthsMap).sort((a, b) => { let [am, ay] = a.split('/'), [bm, by] = b.split('/'); return new Date(by, bm - 1) - new Date(ay, am - 1); });
+  let h = ''; keys.forEach(mk => { h += `<button class="m-tab ${selectedMonthKey === mk ? 'active' : ''}" data-m="${mk}">${getMonthNameOnly(mk)}</button>`; }); h += `<button class="m-tab ${selectedMonthKey === 'all' ? 'active' : ''}" data-m="all">الكل ${_cache.length}</button>`;
+  bar.innerHTML = h; bar.querySelectorAll('.m-tab').forEach(b => b.onclick = () => { selectedMonthKey = b.dataset.m; currentPage = 1; renderBar(); renderTable(); });
+}
+function renderTable() {
+  let tasnefMap = getTasnefMap(); let list = selectedMonthKey === 'all' ? _cache : (_monthsMap[selectedMonthKey]?.items || []);
+  let totalSales = 0, expensesByCat = {}; window.FINAL_CATS_TASNEF.forEach(c => expensesByCat[c] = 0); let expensesBySupplier = {}; let trend = {};
+  list.forEach(({ k: dateKey, data }) => {
+    let arr = toArray(data); let empRows = {}, insta = 0, voda = 0;
+    arr.forEach(it => { if (!it || !it.id) return; let id = it.id + ''; if (id.startsWith('t1_')) { let m = id.match(/t1_r(\d+)_c(\d+)/); if (!m) return; let r = m[1], c = m[2]; if (!empRows[r]) empRows[r] = { shift: 0, diff: 0, val: 0, sup: '' }; if (c === '2') empRows[r].shift = calcNum(it.val); else if (c === '3') empRows[r].diff = calcNum(it.val); else if (c === '5') empRows[r].sup = (it.val || '').trim(); else if (c === '6') empRows[r].val = calcNum(it.val); } else { if (id.includes('insta')) insta += calcNum(it.val); else if (id.includes('voda')) voda += calcNum(it.val); } });
+    if (!trend[dateKey]) trend[dateKey] = { دواء: 0, كوزمتكس: 0, مصاريف: 0, total: 0 };
+    Object.values(empRows).forEach(r => { totalSales += (r.shift + r.diff); if (r.val && r.sup) { let cat = getCategoryForSupplier(r.sup, tasnefMap); expensesByCat[cat] = (expensesByCat[cat] || 0) + r.val; expensesBySupplier[r.sup] = (expensesBySupplier[r.sup] || 0) + r.val; trend[dateKey][cat] = (trend[dateKey][cat] || 0) + r.val; trend[dateKey].total += r.val; } }); totalSales += insta + voda;
   });
-  try{ document.querySelectorAll('select').forEach(sel=>{ [...sel.options].forEach(op=>{ let t=op.textContent.trim(); if(['مخزن دواء','شركة دواء','عام','كوزمتكس','مصاريف'].includes(t)) cats.add(t); }); }); }catch(e){}
-  if(cats.size===0) ['مخزن دواء','شركة دواء','عام','كوزمتكس','مصاريف'].forEach(c=>cats.add(c));
-  return [...cats].filter(Boolean);
+  _lastData = { expensesByCat, expensesBySupplier, list, totalSales, trend };
+  let totalExpenses = Object.values(expensesByCat).reduce((a, b) => a + b, 0);
+  document.getElementById('monthSummary').textContent = `${list.length} يوم | بيع ${totalSales.toLocaleString()} | مصروف ${totalExpenses.toLocaleString()} | صافي ${(totalSales - totalExpenses).toLocaleString()}`;
+
+  // ===== النسب رجعت هنا =====
+  let saved = JSON.parse(localStorage.getItem('profitDist2') || '{"my":10,"dist":{"دواء":50,"كوزمتكس":30,"مصاريف":20}}');
+  document.getElementById('proStats').innerHTML = `
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:12px">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <b>📊 ملخص احترافي بالنسب - ${selectedMonthKey === 'all' ? 'الكل' : getMonthNameOnly(selectedMonthKey)} - ${Object.keys(tasnefMap).length} مورد مصنف</b>
+      <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;font-weight:800">نسبة ربحي</span><input id="myP" class="mini-input" type="number" value="${saved.my}" oninput="updatePro()"><span>%</span></div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi"><div><div style="font-size:10px;color:#64748b">إجمالي البيع</div><b>${totalSales.toLocaleString()}</b></div><span>💰</span></div>
+      <div class="kpi"><div><div style="font-size:10px;color:#64748b">المصروف الفعلي</div><b>${totalExpenses.toLocaleString()}</b></div><span>📦</span></div>
+      <div class="kpi"><div><div style="font-size:10px;color:#64748b">الصافي قبل ربحك</div><b>${(totalSales - totalExpenses).toLocaleString()}</b></div><span>📈</span></div>
+      <div class="kpi" style="background:#f0fdf4"><div><div style="font-size:10px">ربحي</div><b id="myV">0</b></div><span>👤</span></div>
+      <div class="kpi" style="background:#fff7ed"><div><div style="font-size:10px">الباقي للتوزيع</div><b id="remV">0</b></div><span>🧮</span></div>
+    </div>
+    <div class="pro-grid">
+      ${window.FINAL_CATS_TASNEF.map(cat => {
+    let actual = expensesByCat[cat] || 0; let perc = totalExpenses ? (actual / totalExpenses * 100).toFixed(1) : 0;
+    let col = cat === 'دواء' ? '#0f766e' : cat === 'كوزمتكس' ? '#7c3aed' : '#dc2626';
+    let allocPerc = saved.dist[cat] || 0;
+    return `<div style="border:1px solid #f1f5f9;border-radius:14px;padding:10px;border-top:3px solid ${col};cursor:pointer" onclick="openCategoryDetails('${cat}')">
+          <div style="display:flex;justify-content:space-between"><b><span style="display:inline-block;width:8px;height:8px;background:${col};border-radius:50%"></span> ${cat}</b><small>${perc}% من المصروف • دوس</small></div>
+          <div style="font-size:20px;font-weight:900;margin-top:4px">${actual.toLocaleString()} <small style="font-size:11px;color:#64748b">جنيه</small></div>
+          <div class="bar-bg" style="margin-top:6px"><div class="bar-f" style="width:${perc}%;background:${col}"></div></div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:8px" onclick="event.stopPropagation()"><span style="font-size:11px">مخصص:</span><input data-cat="${cat}" class="mini-input percI" type="number" value="${allocPerc}" oninput="updatePro()"><span style="font-size:10px">%</span><b data-res="${cat}" style="margin-right:auto;background:#f8fafc;padding:3px 8px;border-radius:6px">0</b></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px"><span>الفرق:</span><b data-diff="${cat}">0</b></div>
+          <div data-status="${cat}" style="margin-top:4px"></div>
+        </div>`;
+  }).join('')}
+    </div>
+    <div id="sumErr" style="text-align:center;margin-top:8px;font-size:11px;font-weight:800"></div>
+  </div>`;
+  updatePro();
+  document.getElementById('catPills').innerHTML = ['الكل', ...window.FINAL_CATS_TASNEF].map(c => `<button class="cat-pill ${_activeCatFilter === c ? 'active' : ''}" onclick="setCatFilter('${c}')">${c}</button>`).join('');
+  filterSuppliers(); renderTrend(); renderDailyRows();
 }
 
-function loadProfitConfig(){
-  let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{"desired":50,"dist":{"مخزن دواء":40,"شركة دواء":30,"عام":10,"كوزمتكس":15,"مصاريف":5}}');
-  setTimeout(()=>{ if(document.getElementById('desiredProfit')) document.getElementById('desiredProfit').value=cfg.desired||50; },30);
-
-  let cats=getSupplierClassifications();
-  let dist=cfg.dist||{};
-  let sales = monthCashTotal || 0; // من اجمالي البيع كاش
-  let desired=cfg.desired||50;
-  let remainingPerc=100-desired;
-  let profitValue=sales*desired/100;
-  let remainingValue=sales*remainingPerc/100;
-
-  if(document.getElementById('autoSalesKPI')) document.getElementById('autoSalesKPI').textContent=sales.toLocaleString();
-
-  let html=`
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <div class="badge" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe">المبيعات كاش: ${sales.toLocaleString()}</div>
-    <div class="badge" style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0">ربح مطلوب ${desired}% = ${profitValue.toLocaleString()}</div>
-    <div class="badge" style="background:#f8fafc;color:#334155;border:1px solid #e2e8f0">المتبقي ${remainingPerc}% = ${remainingValue.toLocaleString()}</div>
-  </div>
-  <div style="overflow:auto;border-radius:14px;border:1px solid #eef2f7">
-  <table>
-    <thead>
-      <tr>
-        <th style="width:140px">البند</th>
-        ${cats.map(c=>`<th>${c}<div style="font-size:9px;font-weight:400;opacity:.7;margin-top:2px"><input data-cat="${c}" value="${dist[c]||0}" oninput="saveProfitConfig()" class="profit-input" style="width:50px"> %</div></th>`).join('')}
-        <th>الاجمالي</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="background:#f8fafc;font-weight:900">المفروض كده</td>
-        ${cats.map(c=>{ let p=dist[c]||0; let val=remainingValue*p/100; return `<td data-val="${c}"><div style="font-size:12px;font-weight:900">${val.toLocaleString()}</div><div style="font-size:9px;color:#64748b">${p}% من المتبقي</div></td>`; }).join('')}
-        <td style="background:#f1f5f9;font-weight:900">${remainingValue.toLocaleString()}</td>
-      </tr>
-      <tr style="background:#fffbeb">
-        <td style="background:#fef3c7;font-weight:900;color:#92400e">الفعلي بقا</td>
-        ${cats.map(c=>`<td data-actual="${c}" style="background:#fffbeb;font-weight:900">-</td>`).join('')}
-        <td data-actual="totalCat" style="background:#fef3c7;font-weight:900">-</td>
-      </tr>
-      <tr>
-        <td style="background:#fee2e2;font-weight:900;color:#991b1b">الفرق (المشاكل)</td>
-        ${cats.map(c=>`<td data-diff="${c}" style="font-weight:900">-</td>`).join('')}
-        <td data-diff="totalCat">-</td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-  <div id="distSum" style="text-align:center;margin-top:10px;font-weight:800;font-size:11px"></div>
-  `;
-  document.getElementById('profitDistTable').innerHTML=html;
-  calcPreview();
+function updatePro() {
+  let totalSales = _lastData.totalSales; let totalExpenses = Object.values(_lastData.expensesByCat).reduce((a, b) => a + b, 0);
+  let myP = parseFloat(document.getElementById('myP')?.value) || 0; let percIs = document.querySelectorAll('.percI'); let dist = {}, sum = 0;
+  percIs.forEach(i => { let v = parseFloat(i.value) || 0; dist[i.dataset.cat] = v; sum += v; });
+  let myV = totalSales * myP / 100; let rem = totalSales - myV;
+  let myEl = document.getElementById('myV'); if (myEl) myEl.textContent = myV.toLocaleString(); let remEl = document.getElementById('remV'); if (remEl) remEl.textContent = rem.toLocaleString();
+  let err = document.getElementById('sumErr'); if (err) { err.innerHTML = sum !== 100 && sum !== 0 ? `<span style="color:#dc2626">⚠ مجموع ${sum}% لازم 100%</span>` : `<span style="color:#16a34a">✓ مجموع ${sum}%</span>`; }
+  document.querySelectorAll('[data-res]').forEach(el => {
+    let cat = el.dataset.res; let p = dist[cat] || 0; let alloc = rem * p / 100; el.textContent = alloc.toLocaleString();
+    let actual = _lastData.expensesByCat[cat] || 0; let diff = alloc - actual;
+    let diffEl = document.querySelector(`[data-diff="${cat}"]`); if (diffEl) { diffEl.textContent = diff.toLocaleString(); diffEl.style.color = diff >= 0 ? '#16a34a' : '#dc2626'; }
+    let statusEl = document.querySelector(`[data-status="${cat}"]`); if (statusEl) { statusEl.innerHTML = diff >= 0 ? `<span style="background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0;padding:2px 6px;border-radius:20px;font-size:10px">✅ متبقي ${diff.toLocaleString()}</span>` : `<span style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:2px 6px;border-radius:20px;font-size:10px">⚠ تجاوز ${Math.abs(diff).toLocaleString()}</span>`; }
+  });
+  localStorage.setItem('profitDist2', JSON.stringify({ my: myP, dist }));
 }
 
-function saveProfitConfig(){
-  let desired=calcNumTotal(document.getElementById('desiredProfit')?.value||50);
-  let dist={};
-  document.querySelectorAll('input[data-cat]').forEach(inp=>{ dist[inp.dataset.cat]=calcNumTotal(inp.value); });
-  let old=JSON.parse(localStorage.getItem('profitConfigTotal')||'{}');
-  localStorage.setItem('profitConfigTotal', JSON.stringify({desired, expected: monthCashTotal, dist}));
-  loadProfitConfig();
+function setCatFilter(cat) { _activeCatFilter = cat; document.querySelectorAll('.cat-pill').forEach(b => b.classList.toggle('active', b.textContent === cat)); filterSuppliers(); renderDailyRows(); }
+function filterSuppliers() {
+  let q = (document.getElementById('supSearch')?.value || '').toLowerCase().trim();
+  let map = getTasnefMap(); let sup = _lastData.expensesBySupplier; let entries = Object.entries(sup).sort((a, b) => b[1] - a[1]);
+  let total = Object.values(sup).reduce((a, b) => a + b, 0);
+  if (_activeCatFilter !== 'الكل') entries = entries.filter(([name]) => getCategoryForSupplier(name, map) === _activeCatFilter);
+  if (q) entries = entries.filter(([name]) => name.toLowerCase().includes(q));
+  document.getElementById('supCount').textContent = `${entries.length} مورد`;
+  document.getElementById('supTbody').innerHTML = entries.map(([name, val]) => {
+    let cat = getCategoryForSupplier(name, map); let perc = total ? (val / total * 100).toFixed(1) : 0; let col = cat === 'دواء' ? '#0f766e' : cat === 'كوزمتكس' ? '#7c3aed' : '#dc2626';
+    return `<tr style="cursor:pointer" onclick="openSupplierDetails('${name.replace(/'/g, "\\'")}')"><td style="text-align:right;font-weight:700">${name}</td><td><span style="background:${col}22;color:${col};padding:2px 6px;border-radius:10px;font-size:10px">${cat}</span></td><td style="font-weight:800">${val.toLocaleString()}</td><td><div style="display:flex;align-items:center;gap:6px"><div class="bar-bg" style="flex:1"><div class="bar-f" style="width:${perc}%;background:${col}"></div></div><small>${perc}%</small></div></td></tr>`;
+  }).join('') || `<tr><td colspan=4 style="padding:20px;color:#94a3b8">مفيش</td></tr>`;
 }
-
-function calcPreview(){
-  try{
-    let cfg=JSON.parse(localStorage.getItem('profitConfigTotal')||'{}');
-    let sum=Object.values(cfg.dist||{}).reduce((a,b)=>a+b,0);
-    let el=document.getElementById('distSum');
-    if(el) el.innerHTML=`مجموع التوزيع: <span style="background:${sum===100?'#dcfce7':'#fee2e2'};padding:4px 10px;border-radius:20px">${sum}% ${sum===100?'✓':'لازم 100%'}</span> - محسوب تلقائي من مبيعات الشهر كاش بدون انستا وفودافون`;
-  }catch(e){}
+function renderTrend() {
+  let trend = _lastData.trend; let keys = Object.keys(trend).sort((a, b) => parseDate(a) - parseDate(b));
+  document.getElementById('dailyTrend').innerHTML = keys.map(k => { let r = trend[k]; return `<tr style="cursor:pointer" onclick="openDayDetails('${k}')"><td>${k}</td><td>${(r['دواء'] || 0).toLocaleString()}</td><td>${(r['كوزمتكس'] || 0).toLocaleString()}</td><td>${(r['مصاريف'] || 0).toLocaleString()}</td><td style="font-weight:900">${(r.total || 0).toLocaleString()}</td></tr>`; }).join('') || '<tr><td colspan=5>فاضي</td></tr>';
 }
-
-function goToDaily(dateKey){ localStorage.setItem('jumpToDate', dateKey); if(typeof showTab==='function') showTab('daily'); }
-function goToSupplier(supName){ if(!supName||supName=='-') return; localStorage.setItem('supplierFilter', supName); if(typeof showTab==='function') showTab('qawaed'); }
-
-function renderTotalTable(){
-  try{
-    let dailyStore=JSON.parse(localStorage.getItem('dailyStore')||'{}');
-    let fromV=document.getElementById('totalFrom')?.value||'', toV=document.getElementById('totalTo')?.value||'';
-    let fromD=parseDateForFilterTotal(fromV), toD=parseDateForFilterTotal(toV);
-    const monthNames=['يناير','فبراير','مارس','ابريل','مايو','يونيو','يوليو','اغسطس','سبتمبر','اكتوبر','نوفمبر','ديسمبر'];
-    let months={};
-    Object.keys(dailyStore).sort((a,b)=> parseDateForFilterTotal(b)-parseDateForFilterTotal(a)).forEach(dateKey=>{
-      let d=parseDateForFilterTotal(dateKey); if(!d) return;
-      if(fromD && d<fromD) return; if(toD && d>toD) return;
-      let monthKey=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}`;
-      if(!months[monthKey]) months[monthKey]={days:[],monthNum:d.getMonth(),year:d.getFullYear()};
-      let data=dailyStore[dateKey]; if(!Array.isArray(data)) return;
-      let empRows={}, instaSum=0, vodaSum=0;
-      data.forEach(it=>{
-        if(!it||!it.id) return;
-        if(it.id.startsWith('t1_')){
-          let m=it.id.match(/t1_r(\d+)_c(\d+)/); if(!m) return;
-          let r=m[1], c=m[2]; if(!empRows[r]) empRows[r]={emp:'',shift:0,diff:0,val:0,sup:'',cat:''};
-          if(c==='1') empRows[r].emp=(it.val||'').trim();
-          if(c==='2') empRows[r].shift=calcNumTotal(it.val);
-          if(c==='3') empRows[r].diff=calcNumTotal(it.val);
-          if(c==='4') empRows[r].cat=(it.val||'').trim();
-          if(c==='5') empRows[r].sup=(it.val||'').trim();
-          if(c==='6') empRows[r].val=calcNumTotal(it.val);
-        }
-        if(it.id.includes('insta_')) instaSum+=calcNumTotal(it.val);
-        if(it.id.includes('voda_')) vodaSum+=calcNumTotal(it.val);
-      });
-      months[monthKey].days.push({dateKey, empRows, instaSum, vodaSum});
-    });
-
-    let monthKeys=Object.keys(months).sort((a,b)=> b.localeCompare(a));
-    if(!activeMonthTab ||!months[activeMonthTab]){ activeMonthTab=monthKeys[0]||null; if(activeMonthTab) localStorage.setItem('activeMonthTab',activeMonthTab); }
-
-    document.getElementById('monthTabs').innerHTML=monthKeys.map(m=>{
-      let isActive=m===activeMonthTab?'active':'';
-      return `<div class="month-tab ${isActive}" onclick="activeMonthTab='${m}';localStorage.setItem('activeMonthTab','${m}');renderTotalTable()">${monthNames[months[m].monthNum]}</div>`;
-    }).join('') || '<div>مفيش بيانات</div>';
-
-    let rows=''; monthCashTotal=0; let totalCatActual={}; let totalInsta=0, totalVoda=0;
-    let activeData=months[activeMonthTab]?.days||[];
-    activeData.forEach(({dateKey, empRows, instaSum, vodaSum})=>{
-      totalInsta+=instaSum; totalVoda+=vodaSum;
-      Object.values(empRows).forEach(r=>{
-        if(!r.emp &&!r.sup && r.shift==0 && r.diff==0 && r.val==0) return;
-        monthCashTotal+=r.shift;
-        if(r.cat) totalCatActual[r.cat]=(totalCatActual[r.cat]||0)+r.val;
-        let safi=r.shift + r.diff - r.val;
-        rows+=`<tr>
-          <td onclick="goToDaily('${dateKey}')">${dateKey}</td>
-          <td>${r.emp||'-'}</td>
-          <td><span style="background:#eff6ff;padding:4px 8px;border-radius:8px">${r.shift?r.shift.toLocaleString():'-'}</span></td>
-          <td style="${r.diff<0?'color:#dc2626':'color:#16a34a'}">${r.diff||0}</td>
-          <td onclick="event.stopPropagation();goToSupplier('${r.sup}')"><span style="font-size:9px;background:#f1f5f9;padding:3px 7px;border-radius:20px">${r.cat||''}</span> ${r.val?r.val.toLocaleString():'-'}</td>
-          <td>${r.sup||'-'}</td>
-          <td style="color:#7c3aed">${instaSum?instaSum.toLocaleString(): '-'}</td>
-          <td style="color:#dc2626">${vodaSum?vodaSum.toLocaleString(): '-'}</td>
-          <td class="safi">${safi.toLocaleString()}</td>
-        </tr>`;
-      });
-    });
-
-    // تحديث الـ KPI والفعلي
-    setTimeout(()=>{
-      if(document.getElementById('autoSalesKPI')) document.getElementById('autoSalesKPI').textContent=monthCashTotal.toLocaleString();
-      let totalCatSum=Object.values(totalCatActual).reduce((a,b)=>a+b,0);
-      document.querySelectorAll('[data-actual]').forEach(td=>{
-        let k=td.getAttribute('data-actual');
-        if(k==='totalCat') td.textContent=totalCatSum.toLocaleString();
-        else if(totalCatActual[k]!==undefined) td.textContent=totalCatActual[k].toLocaleString();
-        else if(k!=='profit' && k!=='sales' && k!=='remaining' && k!=='totalCat') td.textContent='0';
-      });
-      document.querySelectorAll('[data-diff]').forEach(td=>{
-        let k=td.getAttribute('data-diff');
-        let valEl=document.querySelector(`[data-val="${k}"]`);
-        let actEl=document.querySelector(`[data-actual="${k}"]`);
-        if(k==='totalCat'){
-          let expectedVal=Object.values(document.querySelectorAll('[data-val]')).reduce((a,el)=>a+calcNumTotal(el.textContent),0);
-          let diff=totalCatSum-expectedVal;
-          td.textContent=(diff>0?'+':'')+diff.toLocaleString();
-          td.style.color=diff>0?'#dc2626':'#16a34a';
-        } else if(valEl && actEl){
-          let ev=calcNumTotal(valEl.textContent); let av=calcNumTotal(actEl.textContent); let diff=av-ev;
-          td.textContent=(diff>0?'+':'')+diff.toLocaleString();
-          td.style.color=diff>0?'#dc2626':'#16a34a';
-          if(Math.abs(diff)>0) td.style.background=diff>0?'#fee2e2':'#dcfce7';
-        }
-      });
-      calcPreview();
-    },100);
-
-    document.getElementById('totalTableCard').innerHTML=`<div class="glass"><div style="display:flex;justify-content:space-between"><b>📅 ${activeMonthTab?monthNames[months[activeMonthTab].monthNum]+' '+months[activeMonthTab].year:''} - كاش فقط: ${monthCashTotal.toLocaleString()} جنيه</b><span style="font-size:10px;color:#64748b">انستا ${totalInsta.toLocaleString()} + فودافون ${totalVoda.toLocaleString()} ارباح منفصلة</span></div><div style="overflow:auto;max-height:70vh;margin-top:12px;border-radius:14px;border:1px solid #eef2f7"><table><thead><tr><th>التاريخ</th><th>الموظف</th><th>الشيفت كاش</th><th>العجز</th><th>المورد [تصنيف]</th><th>اسم مورد</th><th>انستا</th><th>فودافون</th><th>الصافي كاش</th></tr></thead><tbody>${rows||'<tr><td colspan=9>مفيش بيانات</td></tr>'}</tbody></table></div></div>`;
-  }catch(e){ console.error(e); document.getElementById('totalTableCard').innerHTML='Error: '+e.message; }
+function renderDailyRows() {
+  let list = _lastData.list; let map = getTasnefMap(); let totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE)); if (currentPage > totalPages) currentPage = totalPages;
+  let slice = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE); let rows = [];
+  slice.forEach(({ k: dateKey, data }) => {
+    let arr = toArray(data); let empRows = {};
+    arr.forEach(it => { if (!it || !it.id) return; let id = it.id + ''; if (id.startsWith('t1_')) { let m = id.match(/t1_r(\d+)_c(\d+)/); if (!m) return; let r = m[1], c = m[2]; if (!empRows[r]) empRows[r] = { emp: '', shift: 0, diff: 0, val: 0, sup: '' }; if (c === '1') empRows[r].emp = (it.val || '').toString(); else if (c === '2') empRows[r].shift = calcNum(it.val); else if (c === '3') empRows[r].diff = calcNum(it.val); else if (c === '5') empRows[r].sup = (it.val || '').toString(); else if (c === '6') empRows[r].val = calcNum(it.val); } });
+    for (let r of Object.values(empRows)) { if (!r.emp && !r.sup && !r.shift && !r.diff && !r.val) continue; let cat = r.sup ? getCategoryForSupplier(r.sup, map) : '-'; if (_activeCatFilter !== 'الكل' && cat !== _activeCatFilter) continue; rows.push(`<tr class="row-day" onclick="openDayDetails('${dateKey}')"><td>${dateKey}</td><td>${r.emp || '-'}</td><td>${r.shift || '-'}</td><td>${r.diff || 0}</td><td>${r.val ? r.val.toLocaleString() : '-'}</td><td>${r.sup || '-'} <small>(${cat})</small></td></tr>`); }
+  });
+  document.getElementById('totalTableCard').innerHTML = rows.length ? `<table class="tbl"><thead><tr><th>التاريخ</th><th>الموظف</th><th>الشيفت</th><th>العجز</th><th>القيمة</th><th>المورد</th></tr></thead><tbody>${rows.join('')}</tbody></table>` : '<div style="padding:20px;text-align:center;color:#94a3b8">فاضي حسب الفلتر</div>';
+  let pHtml = ''; if (totalPages > 1) { for (let i = 1; i <= totalPages; i++) { if (i == 1 || i == totalPages || Math.abs(i - currentPage) <= 1) pHtml += `<button style="padding:4px 8px;border-radius:7px;border:1px solid #e2e8f0;background:${i == currentPage ? '#0f172a' : '#fff'};color:${i == currentPage ? '#fff' : '#000'}" onclick="currentPage=${i};renderDailyRows()">${i}</button>`; else if (Math.abs(i - currentPage) == 2) pHtml += '<span>...</span>'; } } document.getElementById('totalPager').innerHTML = pHtml;
 }
+function openSupplierDetails(name) {
+  let list = _lastData.list; let total = 0; let days = [];
+  list.forEach(({ k: dateKey, data }) => { let arr = toArray(data); let rows = {}; arr.forEach(it => { let m = (it.id + '').match(/t1_r(\d+)_c(\d+)/); if (!m) return; let r = m[1], c = m[2]; if (!rows[r]) rows[r] = { sup: '', val: 0 }; if (c === '5') rows[r].sup = (it.val || '').trim(); if (c === '6') rows[r].val = calcNum(it.val); }); Object.values(rows).forEach(r => { if (r.sup === name && r.val) { total += r.val; days.push({ date: dateKey, val: r.val }); } }); });
+  days.sort((a, b) => parseDate(a.date) - parseDate(b.date));
+  document.getElementById('drillBox').innerHTML = `<div style="padding:14px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between"><b>📦 ${name} - إجمالي ${total.toLocaleString()} - ${days.length} عملية</b><button onclick="closeDrill()" style="background:#0f172a;color:#fff;border:none;border-radius:8px;padding:5px 10px">✕</button></div><div style="padding:12px;max-height:70vh;overflow:auto"><table class="tbl"><thead><tr><th>التاريخ</th><th>القيمة</th><th>تراكمي</th></tr></thead><tbody>${days.map((d, i) => { let cum = days.slice(0, i + 1).reduce((a, b) => a + b.val, 0); return `<tr><td>${d.date}</td><td>${d.val.toLocaleString()}</td><td>${cum.toLocaleString()}</td></tr>`; }).join('')}</tbody></table></div>`;
+  document.getElementById('drillModal').classList.add('show');
+}
+function openDayDetails(dateKey) {
+  let store = {}; try { store = JSON.parse(localStorage.getItem('dailyStore') || '{}'); } catch { } let data = store[dateKey]; if (!data) return;
+  let arr = toArray(data); let map = getTasnefMap(); let rows = []; arr.forEach(it => { let m = (it.id + '').match(/t1_r(\d+)_c(\d+)/); if (!m) return; let r = m[1], c = m[2]; if (!rows[r]) rows[r] = {}; rows[r][c] = it.val; });
+  let htmlRows = Object.values(rows).map(r => { if (!r['1'] && !r['5']) return ''; let cat = r['5'] ? getCategoryForSupplier(r['5'], map) : '-'; return `<tr><td>${r['1'] || '-'}</td><td>${r['2'] || '-'}</td><td>${r['3'] || '-'}</td><td>${r['5'] || '-'} (${cat})</td><td>${r['6'] || '-'}</td></tr>`; }).join('');
+  document.getElementById('drillBox').innerHTML = `<div style="padding:14px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between"><b>📅 يوم ${dateKey}</b><div><button onclick="localStorage.setItem('selectedDate','${dateKey}'); closeDrill(); showTab('daily');" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:5px 10px;margin-left:6px">تعديل</button><button onclick="closeDrill()" style="background:#0f172a;color:#fff;border:none;border-radius:8px;padding:5px 10px">✕</button></div></div><div style="padding:12px"><table class="tbl"><thead><tr><th>الموظف</th><th>الشيفت</th><th>العجز</th><th>المورد</th><th>القيمة</th></tr></thead><tbody>${htmlRows}</tbody></table></div>`;
+  document.getElementById('drillModal').classList.add('show');
+}
+function openCategoryDetails(cat) { _activeCatFilter = cat; renderTable(); window.scrollTo(0, 0); }
+function closeDrill() { document.getElementById('drillModal').classList.remove('show'); }
+function exportExcel() { let rows = [['المورد', 'الفئة', 'القيمة']]; Object.entries(_lastData.expensesBySupplier).forEach(([n, v]) => { rows.push([n, getCategoryForSupplier(n, getTasnefMap()), v]); }); let csv = rows.map(r => r.join(',')).join('\n'); let blob = new Blob([csv], { type: 'text/csv' }); let url = URL.createObjectURL(blob); let a = document.createElement('a'); a.href = url; a.download = `موردين-${selectedMonthKey}.csv`; a.click(); }
+window.renderTotal = renderTotal; window.filterSuppliers = filterSuppliers; window.setCatFilter = setCatFilter; window.openSupplierDetails = openSupplierDetails; window.openDayDetails = openDayDetails; window.closeDrill = closeDrill; window.exportExcel = exportExcel; window.renderDailyRows = renderDailyRows; window.updatePro = updatePro; window.openCategoryDetails = openCategoryDetails;
