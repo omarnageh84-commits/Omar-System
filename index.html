@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="css/pharmacy.css">
     <link rel="stylesheet" href="css/private.css">
     <style>
-     .tab-content{ display:none; }
-     .tab-content.active{ display:block; }
-      #unified-all-global{ position:fixed; bottom:20px; left:20px; z-index:999999; background:#7c3aed; color:#fff; border:none; padding:12px 22px; border-radius:30px; font-weight:900; cursor:pointer; }
+    .tab-content{ display:none; }
+    .tab-content.active{ display:block; }
+     #unified-all-global{ position:fixed; bottom:20px; left:20px; z-index:999999; background:#7c3aed; color:#fff; border:none; padding:12px 22px; border-radius:30px; font-weight:900; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -38,23 +38,71 @@
         <div id="privateApp" style="display:none;"><div id="private"></div></div>
     </div>
     <button id="unified-all-global" onclick="unifiedExportAll()">📦 تصدير كله XLSX</button>
+
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="js/pharmacy/googleSync.js?v=17"></script>
-    <script src="js/pharmacy/daily.js?v=17"></script>
-    <script src="js/pharmacy/total.js?v=17"></script>
-    <script src="js/pharmacy/purchases.js?v=17"></script>
-    <script src="js/pharmacy/sales.js?v=17"></script>
-    <script src="js/pharmacy/database.js?v=17"></script>
-    <script src="js/pharmacy/actions.js?v=17"></script>
-    <script src="js/private/private.js?v=17"></script>
-    <script src="js/private/masrofaty.js?v=17"></script>
-    <script src="js/private/dyon.js?v=17"></script>
-    <script src="js/private/hodor.js?v=17"></script>
-    <script src="js/private/notes.js?v=17"></script>
-    <script src="js/export.js?v=17"></script>
-    <script type="module" src="firebase-config.js?v=17"></script>
-    <script type="module" src="app.js?v=17"></script>
+    <script src="js/pharmacy/googleSync.js?v=18"></script>
+    <script src="js/pharmacy/daily.js?v=18"></script>
+    <script src="js/pharmacy/total.js?v=18"></script>
+    <script src="js/pharmacy/purchases.js?v=18"></script>
+    <script src="js/pharmacy/sales.js?v=18"></script>
+    <script src="js/pharmacy/database.js?v=18"></script>
+    <script src="js/pharmacy/actions.js?v=18"></script>
+    <script src="js/private/private.js?v=18"></script>
+    <script src="js/private/masrofaty.js?v=18"></script>
+    <script src="js/private/dyon.js?v=18"></script>
+    <script src="js/private/hodor.js?v=18"></script>
+    <script src="js/private/notes.js?v=18"></script>
+    <script type="module" src="firebase-config.js?v=18"></script>
+    <script type="module" src="app.js?v=18"></script>
+
     <script>
+        // === التصدير جوه الصفحة - مش محتاج ملف خارجي ===
+        function getStore(n){ try{ let v=localStorage.getItem(n); if(v) return JSON.parse(v);}catch(e){} return null; }
+        window.unifiedExportAll=function(){
+          try{
+            if(typeof XLSX==='undefined'){ alert('المكتبة بتحمل.. استنى ثانيتين'); return; }
+            let wb=XLSX.utils.book_new();
+            let store=getStore('dailyStore')||{};
+            let rows=[['التاريخ','الموظف','الشيفت','العجز','القيمة','المورد']];
+            Object.keys(store).forEach(dateKey=>{
+              let data=store[dateKey]; let arr=Array.isArray(data)?data:Object.values(data||{});
+              let empRows={};
+              arr.forEach(it=>{
+                if(!it||!it.id) return;
+                let m=(it.id+'').match(/t1_r(\d+)_c(\d+)/);
+                if(!m) return;
+                let r=m[1],c=m[2];
+                if(!empRows[r]) empRows[r]={emp:'',shift:'',diff:'',sup:'',val:''};
+                if(c==='1') empRows[r].emp=it.val||'';
+                if(c==='2') empRows[r].shift=it.val||'';
+                if(c==='3') empRows[r].diff=it.val||'';
+                if(c==='5') empRows[r].sup=it.val||'';
+                if(c==='6') empRows[r].val=it.val||'';
+              });
+              Object.values(empRows).forEach(r=>{ if(r.emp||r.val) rows.push([dateKey,r.emp,r.shift,r.diff,r.val,r.sup]); });
+            });
+            if(rows.length<=1){ alert('مفيش داتا'); return; }
+            XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'اليومية - 211 يوم');
+
+            let purch=getStore('purchaseStore')||[];
+            if(purch.length){
+              let rp=[['التاريخ','المورد','النوع','الدفع','القيمة']];
+              purch.forEach(x=>rp.push([x.date||'',x.supplier||'',x.type||'',x.pay||'',x.value||'']));
+              XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rp),'المشتريات');
+            }
+            let db=getStore('dbStore')||{};
+            if(db.suppliers?.length){
+              let r=[['المورد','التصنيف']]; db.suppliers.forEach(s=>r.push([s.name||'',s.category||'']));
+              XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'الموردين');
+            }
+            if(db.employees?.length){
+              let r=[['الموظفون']]; db.employees.forEach(e=>r.push([e.name||'']));
+              XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'الموظفون');
+            }
+            XLSX.writeFile(wb,'Omar-System-'+new Date().toISOString().slice(0,10)+'.xlsx');
+          }catch(e){ alert('خطأ: '+e.message); console.error(e); }
+        }
+
         function showTab(name){
             document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
