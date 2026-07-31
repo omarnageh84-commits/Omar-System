@@ -1,53 +1,57 @@
-// app.js - V6 يربط فايربيس + شيت + تصدير بدون تكرار
-import { saveToFirebase, GOOGLE_SHEET_WEBAPP_URL } from "./firebase-config.js";
-
-// دالة دفع للشيت آمنة
-async function pushToSheet(row){
-  try{
-    if(!GOOGLE_SHEET_WEBAPP_URL) return;
-    await fetch(GOOGLE_SHEET_WEBAPP_URL,{
-      method:"POST",
-      mode:"no-cors",
-      headers:{ "Content-Type":"text/plain" },
-      body: JSON.stringify(row)
+// V9 - XLSX عربي مظبوط
+function getTableData(table){
+  let rows=[];
+  let h=[...table.querySelectorAll('th')].map(th=>th.innerText.trim());
+  if(h.length && h.join('').length>2) rows.push(h);
+  [...table.querySelectorAll('tr')].forEach(tr=>{
+    let cols=[...tr.querySelectorAll('td')].map(td=>{
+      let inp=td.querySelector('input,select');
+      return inp? inp.value : td.innerText.trim();
     });
-    console.log('✅ اتبعت للشيت:', row);
-  }catch(e){ console.error('❌ الشيت فشل', e); }
+    if(cols.join('').trim() && cols.length>1) rows.push(cols);
+  });
+  return rows;
 }
-
-document.addEventListener('DOMContentLoaded', ()=>{
-  // احتفظ بالدالة الاصلية من daily.js
-  const originalSave = window.saveAndClearDaily;
-
-  window.saveAndClearDaily = async function(){
-    try{
-      // 1- احفظ في فايربيس (لو موجود)
-      if(typeof dailyStore!== 'undefined' && dailyStore){
-        await saveToFirebase("dailyStore", dailyStore);
-      }
-
-      // 2- الشيت - googleSync.js هو اللي بيبعت اصلا، فاحنا مش هنبعت تاني
-      // بس لو googleSync مش شغال، ابعت اخر يوم كـ fallback
-      if(typeof window.syncToSheet!== 'function'){
-        let dateKeys = Object.keys(dailyStore||{});
-        let lastDate = dateKeys[dateKeys.length-1];
-        if(lastDate && dailyStore[lastDate]){
-          let arr = Array.isArray(dailyStore[lastDate])? dailyStore[lastDate] : Object.values(dailyStore[lastDate]);
-          for(let r of arr){
-            if(!r?.val &&!r?.shift) continue;
-            await pushToSheet({date:lastDate, emp:r.emp||"", shift:r.shift||0, diff:r.diff||0, val:r.val||0, sup:r.sup||"", insta:r.insta||0, voda:r.voda||0});
-          }
-        }
-      }
-
-      // 3- نفذ الحفظ الاصلي اللي بيمسح الجدول
-      if(originalSave) await originalSave();
-
-      alert("✅ اتحفظ في الفايربيس والشيت");
-    }catch(e){
-      console.error(e);
-      alert("⚠️ حصل مشكلة في الحفظ: " + e.message);
-      if(originalSave) await originalSave();
+function exportCurrentTab(){
+  let tab=document.querySelector('#pharmacyApp.tab-content.active')?.id||'daily';
+  let cont=document.getElementById(tab);
+  let tables=[...cont.querySelectorAll('table')];
+  if(!tables.length){alert('مفيش جدول');return;}
+  let wb=XLSX.utils.book_new();
+  tables.forEach((t,i)=>{
+    let data=getTableData(t);
+    if(data.length>0){
+      let ws=XLSX.utils.aoa_to_sheet(data);
+      ws['!cols']=data[0].map(()=>({wch:18}));
+      XLSX.utils.book_append_sheet(wb,ws,('جدول '+(i+1)).slice(0,31));
     }
-  };
-});
+  });
+  XLSX.writeFile(wb, tab+'-'+new Date().toLocaleDateString('ar-EG')+'.xlsx');
+}
+function exportAllInOne(){
+  let wb=XLSX.utils.book_new();
+  ['daily','total','purchases','sales','database'].forEach(id=>{
+    let c=document.getElementById(id); if(!c) return;
+    [...c.querySelectorAll('table')].forEach((t,i)=>{
+      let d=getTableData(t); if(d.length<2) return;
+      let ws=XLSX.utils.aoa_to_sheet(d); ws['!cols']=d[0].map(()=>({wch:16}));
+      XLSX.utils.book_append_sheet(wb,ws,(id+'_'+(i+1)).slice(0,31));
+    });
+  });
+  XLSX.writeFile(wb,'Omar-System-كامل-'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+window.addExportButtons=function(){
+  let nav=document.getElementById('navBar');
+  if(nav &&!document.getElementById('btn-all')){
+    let b=document.createElement('button'); b.id='btn-all'; b.textContent='📦 تصدير كله';
+    b.style='background:#7c3aed;color:#fff;border:none;padding:8px 14px;border-radius:10px;font-weight:800;margin-right:8px;cursor:pointer;';
+    b.onclick=exportAllInOne; nav.appendChild(b);
+  }
+  ['daily','total','purchases','sales','database'].forEach(id=>{
+    let cont=document.getElementById(id);
+    if(!cont || cont.querySelector('.btn-export')) return;
+    let btn=document.createElement('button'); btn.className='btn-export';
+    btn.textContent='📥 تصدير اكسل'; btn.style='background:#0f172a;color:#fff;border:none;padding:7px 14px;border-radius:10px;font-weight:800;cursor:pointer;margin:8px;float:left;';
+    btn.onclick=exportCurrentTab; cont.prepend(btn);
+  });
+}
