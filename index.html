@@ -1,59 +1,47 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar System Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pharmacy.css?v=31">
-<link rel="stylesheet" href="css/private.css?v=31">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Omar System - Google Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pharmacy.css">
+<link rel="stylesheet" href="css/private.css">
+<link rel="stylesheet" href="css/mobile-fix.css?v=28">
 <style>
-:root{--card:#fff;--b:#eef0f4;--t:#0f172a;--m:#64748b;--p:#000;--a:#7c3aed}
-body{background:#f5f7fb!important;color:var(--t)!important}
-.app-container{max-width:1300px;margin:0 auto;padding:12px 12px 90px 12px!important}
+:root{--g-blue:#1a73e8;--g-bg:#f8f9fa;--g-border:#dadce0;--g-text:#202124}
+body{background:var(--g-bg)!important;font-family:'Google Sans','Tajawal',sans-serif!important;color:var(--g-text)}
+.app-container{max-width:1400px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-top:12px;overflow:hidden}
+.top-switch{display:flex;background:#fff;border-bottom:1px solid var(--g-border);padding:0 16px;gap:4px}
+.top-btn{background:transparent!important;color:#5f6368!important;border:none!important;border-bottom:3px solid transparent!important;border-radius:0!important;padding:14px 20px!important;font-weight:500!important;box-shadow:none!important}
+.top-btn.active{color:var(--g-blue)!important;border-bottom-color:var(--g-blue)!important;background:#e8f0fe!important;border-radius:8px 8px 0 0!important}
+.nav-bar{background:#fff!important;border-bottom:1px solid var(--g-border);padding:8px 16px!important;display:flex;gap:8px;flex-wrap:wrap}
+.nav-tab{background:#f1f3f4!important;color:#5f6368!important;border:1px solid transparent!important;border-radius:20px!important;padding:8px 18px!important;font-weight:500!important;box-shadow:none!important}
+.nav-tab.active{background:#e8f0fe!important;color:var(--g-blue)!important;border-color:#d2e3fc!important}
+.content{padding:16px!important;background:#fff}
+table{border:1px solid var(--g-border)!important;border-radius:8px!important;overflow:hidden;border-collapse:separate!important;border-spacing:0!important;width:100%}
+table th{background:#f8f9fa!important;color:#5f6368!important;font-weight:500!important;padding:10px!important;border-bottom:1px solid var(--g-border)!important}
+table td{border-bottom:1px solid #f1f3f4!important;padding:8px 10px!important}
+table input{background:#fff!important;border:1px solid var(--g-border)!important;border-radius:6px!important;padding:6px 8px!important}
+table input:focus{border-color:var(--g-blue)!important;outline:2px solid #d2e3fc!important}
+#unified-all-global{background:var(--g-blue)!important;border-radius:24px!important;padding:14px 28px!important;font-weight:500!important;box-shadow:0 1px 3px rgba(0,0,0,.2)!important;left:24px!important;bottom:24px!important}
+#unified-all-global:hover{box-shadow:0 4px 8px rgba(0,0,0,.2)!important}
 .tab-content{display:none}.tab-content.active{display:block}
-
-/* Top Switch */
-.top-switch{display:flex!important;gap:8px;background:var(--card);border:1px solid var(--b);padding:6px;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,.05);position:sticky;top:10px;z-index:100}
-.top-btn{flex:1;height:48px;border-radius:12px!important;border:0!important;background:#f1f3f6!important;color:var(--m)!important;font-weight:800!important;font-size:15px!important}
-.top-btn.active{background:var(--p)!important;color:#fff!important}
-
-/* MAIN TABS - اجباري تظهر */
-#navBar.nav-bar{
- display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;
- gap:8px!important;background:var(--card)!important;border:1px solid var(--b)!important;
- border-radius:16px!important;padding:8px!important;margin:12px 0!important;
- opacity:1!important;visibility:visible!important;height:auto!important
-}
-#navBar::-webkit-scrollbar{display:none}
-.nav-tab{
- display:inline-flex!important;align-items:center;justify-content:center;
- flex:0 0 auto!important;white-space:nowrap!important;
- height:40px!important;padding:0 18px!important;border-radius:12px!important;
- background:#f6f7f9!important;border:1px solid var(--b)!important;color:var(--m)!important;
- font-weight:700!important;font-size:13px!important;opacity:1!important
-}
-.nav-tab.active{background:var(--a)!important;color:#fff!important;border-color:var(--a)!important}
-
-/* Content */
-.content{background:var(--card)!important;border:1px solid var(--b)!important;border-radius:20px!important;box-shadow:0 8px 30px rgba(0,0,0,.06)!important;padding:0!important;overflow:hidden!important}
-.tab-content{padding:12px!important;overflow-x:auto!important}
-table{width:100%!important;min-width:680px!important}
-table th{font-size:12px!important;color:var(--m)!important;background:#f8f9fb!important}
-#unified-all-global{position:fixed!important;left:12px!important;right:12px!important;bottom:12px!important;height:56px!important;background:#000!important;color:#fff!important;border-radius:16px!important;font-weight:800!important;z-index:9999!important;box-shadow:0 12px 32px rgba(0,0,0,.25)!important}
-@media(min-width:769px){#unified-all-global{left:20px!important;right:auto!important;width:240px!important}}
-@media(max-width:768px){.app-container{padding:8px 8px 90px 8px!important}}
+@media(max-width:768px){.app-container{border-radius:0;margin:0}.top-switch{overflow-x:auto;white-space:nowrap}.nav-bar{overflow-x:auto;flex-wrap:nowrap}.content{padding:8px!important}table{min-width:650px!important}}
 </style>
 </head>
 <body>
 <div class="app-container">
+<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #dadce0">
+<img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="32"><span style="font-size:20px;font-weight:500;color:#5f6368">Omar System</span><span style="background:#e8f0fe;color:#1a73e8;padding:2px 8px;border-radius:12px;font-size:11px">Google Style</span>
+</div>
 <div class="top-switch">
-<button class="top-btn active" data-top="pharmacy">💊 الصيدلية</button>
+<button class="top-btn active" data-top="pharmacy">📊 الصيدلية</button>
 <button class="top-btn" data-top="private">👤 الخاص</button>
 </div>
 <div id="pharmacyApp">
 <div class="nav-bar" id="navBar">
 <button class="nav-tab active" data-tab="daily">📅 اليومية</button>
-<button class="nav-tab" data-tab="total">📊 الاجمالي</button>
+<button class="nav-tab" data-tab="total">📈 الاجمالي</button>
 <button class="nav-tab" data-tab="purchases">🧾 المشتريات</button>
 <button class="nav-tab" data-tab="sales">📦 المبيعات للمخزن</button>
 <button class="nav-tab" data-tab="database">🗄 قواعد البيانات</button>
@@ -68,35 +56,40 @@ table th{font-size:12px!important;color:var(--m)!important;background:#f8f9fb!im
 </div>
 <div id="privateApp" style="display:none"><div id="private"></div></div>
 </div>
-<button id="unified-all-global" onclick="unifiedExportAll()">📦 تصدير كله XLSX</button>
+<button id="unified-all-global" onclick="unifiedExportAll()">📥 تصدير XLSX</button>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/pharmacy/googleSync.js?v=31"></script>
-<script src="js/pharmacy/daily.js?v=31"></script>
-<script src="js/pharmacy/total.js?v=31"></script>
-<script src="js/pharmacy/purchases.js?v=31"></script>
-<script src="js/pharmacy/sales.js?v=31"></script>
-<script src="js/pharmacy/database.js?v=31"></script>
-<script src="js/pharmacy/actions.js?v=31"></script>
-<script src="js/private/private.js?v=31"></script>
-<script src="js/private/masrofaty.js?v=31"></script>
-<script src="js/private/dyon.js?v=31"></script>
-<script src="js/private/hodor.js?v=31"></script>
-<script src="js/private/notes.js?v=31"></script>
-<script type="module" src="firebase-config.js?v=31"></script>
-<script type="module" src="app.js?v=31"></script>
+<script src="js/pharmacy/googleSync.js?v=28"></script>
+<script src="js/pharmacy/daily.js?v=28"></script>
+<script src="js/pharmacy/total.js?v=28"></script>
+<script src="js/pharmacy/purchases.js?v=28"></script>
+<script src="js/pharmacy/sales.js?v=28"></script>
+<script src="js/pharmacy/database.js?v=28"></script>
+<script src="js/pharmacy/actions.js?v=28"></script>
+<script src="js/private/private.js?v=28"></script>
+<script src="js/private/masrofaty.js?v=28"></script>
+<script src="js/private/dyon.js?v=28"></script>
+<script src="js/private/hodor.js?v=28"></script>
+<script src="js/private/notes.js?v=28"></script>
+<script type="module" src="firebase-config.js?v=28"></script>
+<script type="module" src="app.js?v=28"></script>
 
 <script>
-function getStore(n){try{return JSON.parse(localStorage.getItem(n))}catch(e){return null}}
-function deepParse(v){try{if(typeof v==='string'){let t=v.trim();if(t.startsWith('{')||t.startsWith('['))return JSON.parse(t)}}catch(e){}return v}
-function normalize(s){if(!s)return[];let a=Array.isArray(s)?s:Object.values(s);return a.map(v=>{let d=deepParse(v);if(typeof d==='string')d=deepParse(d);return d}).filter(Boolean)}
+function getStore(n){try{let v=localStorage.getItem(n);if(v)return JSON.parse(v);}catch(e){}return null;}
+function deepParse(v){try{if(typeof v==='string'){let t=v.trim();if(t.startsWith('{')||t.startsWith('['))return JSON.parse(t);}}catch(e){}return v;}
+function normalize(s){if(!s)return[];let arr=Array.isArray(s)?s:Object.values(s);return arr.map(v=>{let d=deepParse(v);if(typeof d==='string')d=deepParse(d);return d;}).filter(Boolean);}
 window.unifiedExportAll=function(){
  try{
-  let wb=XLSX.utils.book_new();let store=getStore('dailyStore')||{};let r1=[['التاريخ','الموظف','الشيفت','العجز','المورد','القيمة']];
-  Object.keys(store).forEach(k=>{let d=store[k];let arr=Array.isArray(d)?d:Object.values(d||{});let rows={};arr.forEach(it=>{if(!it||!it.id)return;let m=(it.id+'').match(/t1_r(\d+)_c(\d+)/);if(!m)return;let R=m[1],C=m[2];if(!rows[R])rows[R]={emp:'',shift:'',diff:'',sup:'',val:''};if(C==='1')rows[R].emp=it.val||'';if(C==='2')rows[R].shift=it.val||'';if(C==='3')rows[R].diff=it.val||'';if(C==='5')rows[R].sup=it.val||'';if(C==='6')rows[R].val=it.val||'';});Object.values(rows).forEach(x=>{if(x.emp||x.val)r1.push([k,x.emp,x.shift,x.diff,x.sup,x.val])})});
+  if(typeof XLSX==='undefined'){alert('استنى ثانيتين');return;}
+  let wb=XLSX.utils.book_new();
+  let store=getStore('dailyStore')||{};let r1=[['التاريخ','الموظف','الشيفت','العجز','المورد','القيمة']];
+  Object.keys(store).forEach(k=>{let d=store[k];let arr=Array.isArray(d)?d:Object.values(d||{});let rows={};arr.forEach(it=>{if(!it||!it.id)return;let m=(it.id+'').match(/t1_r(\d+)_c(\d+)/);if(!m)return;let R=m[1],C=m[2];if(!rows[R])rows[R]={emp:'',shift:'',diff:'',sup:'',val:''};if(C==='1')rows[R].emp=it.val||'';if(C==='2')rows[R].shift=it.val||'';if(C==='3')rows[R].diff=it.val||'';if(C==='5')rows[R].sup=it.val||'';if(C==='6')rows[R].val=it.val||'';});Object.values(rows).forEach(x=>{if(x.emp||x.val)r1.push([k,x.emp,x.shift,x.diff,x.sup,x.val]);});});
   if(r1.length>1)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r1),'1- اليومية');
-  let purch=getStore('purchaseStore')||[];if(purch.length){let r=[['التاريخ','المورد','النوع','طريقة الدفع','القيمة']];purch.forEach(o=>r.push([o.date||'',o.supplier||'',o.type||'',o.pay||'',o.value||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'2- المشتريات')}
-  XLSX.writeFile(wb,'Omar-Pro-'+new Date().toISOString().slice(0,10)+'.xlsx');alert('✅ '+wb.SheetNames.join('\n'))
+  let purch=getStore('purchaseStore')||[];if(purch.length){let r=[['التاريخ','المورد','النوع','طريقة الدفع','القيمة']];purch.forEach(o=>r.push([o.date||'',o.supplier||'',o.type||'',o.pay||'',o.value||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'2- المشتريات');}
+  let pStore=getStore('privateStore');if(pStore){let list=normalize(pStore);let m=list.filter(o=>!(o.bayan||'').includes('ديون'));let d=list.filter(o=>(o.bayan||'').includes('ديون'));if(m.length){let r=[['التاريخ','البيان','المبلغ','الفئة','طريقة الدفع']];m.forEach(o=>r.push([o.date||'',o.bayan||'',o.amount||'',o.cat||'',o.pay||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'3- مصروفاتي');}if(d.length){let r=[['التاريخ','البيان','المبلغ','الدكتور','طريقة الدفع']];d.forEach(o=>r.push([o.date||'',o.bayan||'',o.amount||'',o.cat||'',o.pay||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'4- الديون');}}
+  let fixed=getStore('monthlyFixed_v16')||getStore('monthlyFixed_v3');if(fixed){let arr=normalize(fixed);if(arr.length&&arr[0].name){let r=[['البند','المبلغ']];arr.forEach(o=>r.push([o.name||'',o.amount||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'7- ثابتة');}}
+  XLSX.writeFile(wb,'Omar-Google-'+new Date().toISOString().slice(0,10)+'.xlsx');
+  alert('✅ اتصدر\n'+wb.SheetNames.join('\n'));
  }catch(e){alert(e.message)}
 };
 function showTab(n){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));document.getElementById(n)?.classList.add('active');document.querySelector(`[data-tab="${n}"]`)?.classList.add('active');if(n==='daily'&&typeof renderDaily==='function')renderDaily();if(n==='total'&&typeof renderTotal==='function')renderTotal();if(n==='purchases'&&typeof renderPurchases==='function')renderPurchases();if(n==='sales'&&typeof renderSales==='function')renderSales();if(n==='database'&&typeof renderDatabase==='function')renderDatabase();}
