@@ -1,12 +1,56 @@
+/* === Omar Mobile Pro V28 - للتلفون فقط === */
 @media (max-width: 768px){
- .app-container{padding:8px!important}
- .top-switch{display:flex;gap:8px}
- .top-btn{flex:1;font-size:14px;padding:10px!important}
- .nav-bar{display:flex;flex-wrap:wrap;gap:6px}
- .nav-tab{flex:1 1 45%;font-size:12px!important;padding:8px!important;text-align:center}
- .content{overflow-x:auto!important}
-  table{min-width:650px!important}
-  table th, table td{font-size:12px!important;padding:6px 4px!important;white-space:nowrap}
-  #unified-all-global{bottom:10px!important;left:10px!important;right:10px!important;width:auto!important;border-radius:12px!important;padding:14px!important;text-align:center}
+  body{ background:#f5f5f7!important }
+ .app-container{ padding:0!important; background:transparent!important; box-shadow:none!important }
+
+ .top-switch{
+    position:sticky; top:0; z-index:100;
+    background:#fff; padding:8px; border-radius:14px;
+    margin:8px; box-shadow:0 2px 8px rgba(0,0,0,.08)
+  }
+ .top-btn{ flex:1; border-radius:10px!important; padding:12px!important; font-weight:700!important }
+
+ .nav-bar{
+    background:#fff; border-radius:14px; margin:8px;
+    padding:8px!important; gap:6px; flex-wrap:nowrap!important;
+    overflow-x:auto; box-shadow:0 2px 8px rgba(0,0,0,.06)
+  }
+ .nav-bar::-webkit-scrollbar{display:none}
+ .nav-tab{
+    flex:0 0 auto; white-space:nowrap;
+    border-radius:20px!important; padding:8px 14px!important;
+    font-size:13px!important; background:#f1f3f4!important
+  }
+ .nav-tab.active{ background:#000!important; color:#fff!important }
+
+ .content{ padding:8px!important }
+
+  /* الجدول يقلب كروت */
+  #daily table, #total table, #purchases table{ display:block; min-width:100%!important; border:none!important }
+  #daily thead, #total thead{ display:none!important }
+  #daily tr, #total tr{
+    display:block; background:#fff; border-radius:16px;
+    margin-bottom:12px; padding:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #eee
+  }
+  #daily td, #total td{
+    display:flex; justify-content:space-between; align-items:center;
+    border:none!important; padding:8px 0!important; border-bottom:1px dashed #eee!important
+  }
+  #daily td:last-child{ border:none!important }
+  #daily td::before{
+    content:attr(data-label); font-weight:700; color:#888; font-size:12px
+  }
+  /* هنضيف الليبل بالـ JS */
+
+  #unified-all-global{
+    left:12px!important; right:12px!important; bottom:12px!important;
+    width:auto!important; border-radius:16px!important;
+    padding:16px!important; font-size:15px!important;
+    background:#000!important; box-shadow:0 8px 24px rgba(0,0,0,.2)!important
+  }
 }
-@media (max-width: 480px){.nav-tab{flex:1 1 100%} }
+
+@media (max-width: 480px){
+ .nav-tab{ font-size:12px!important; padding:7px 12px!important }
+}
