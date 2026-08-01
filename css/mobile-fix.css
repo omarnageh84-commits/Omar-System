@@ -1,56 +1,91 @@
-/* === Omar Mobile Pro V28 - للتلفون فقط === */
+/* Omar Mobile App Look V28 - آمن لكل التبويبات */
 @media (max-width: 768px){
-  body{ background:#f5f5f7!important }
- .app-container{ padding:0!important; background:transparent!important; box-shadow:none!important }
+  body{background:#f8f8fa!important}
+  .app-container{padding:0 10px 90px 10px!important}
 
- .top-switch{
-    position:sticky; top:0; z-index:100;
-    background:#fff; padding:8px; border-radius:14px;
-    margin:8px; box-shadow:0 2px 8px rgba(0,0,0,.08)
+  /* هيدر زي البرامج */
+  .top-switch{
+    position:sticky;top:0;z-index:999;
+    background:rgba(255,255,255,.9)!important;
+    backdrop-filter:blur(12px);
+    border:1px solid #eee!important;
+    border-radius:18px!important;
+    padding:6px!important;
+    margin:10px 0!important;
+    display:flex;gap:6px;
+    box-shadow:0 4px 20px rgba(0,0,0,.06)!important
   }
- .top-btn{ flex:1; border-radius:10px!important; padding:12px!important; font-weight:700!important }
+  .top-btn{
+    flex:1;
+    border-radius:12px!important;
+    padding:12px!important;
+    font-weight:800!important;
+    font-size:14px!important;
+    border:none!important;
+    background:#f1f1f3!important;
+    color:#888!important;
+    transition:.2s
+  }
+  .top-btn.active{
+    background:#000!important;
+    color:#fff!important;
+    box-shadow:0 4px 12px rgba(0,0,0,.2)!important
+  }
 
- .nav-bar{
-    background:#fff; border-radius:14px; margin:8px;
-    padding:8px!important; gap:6px; flex-wrap:nowrap!important;
-    overflow-x:auto; box-shadow:0 2px 8px rgba(0,0,0,.06)
+  /* تابات الصيدلية زي تطبيقات جوجل */
+  .nav-bar{
+    background:#fff!important;
+    border-radius:16px!important;
+    padding:8px!important;
+    margin:0 0 12px 0!important;
+    border:1px solid #eee!important;
+    gap:8px!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    box-shadow:0 2px 12px rgba(0,0,0,.04)!important
   }
- .nav-bar::-webkit-scrollbar{display:none}
- .nav-tab{
-    flex:0 0 auto; white-space:nowrap;
-    border-radius:20px!important; padding:8px 14px!important;
-    font-size:13px!important; background:#f1f3f4!important
+  .nav-bar::-webkit-scrollbar{display:none}
+  .nav-tab{
+    flex:0 0 auto!important;
+    white-space:nowrap!important;
+    border-radius:12px!important;
+    padding:10px 16px!important;
+    font-size:13px!important;
+    font-weight:700!important;
+    background:#f6f6f7!important;
+    border:1px solid #eee!important;
+    color:#666!important
   }
- .nav-tab.active{ background:#000!important; color:#fff!important }
+  .nav-tab.active{
+    background:#7c3aed!important;
+    color:#fff!important;
+    border-color:#7c3aed!important
+  }
 
- .content{ padding:8px!important }
+  /* المحتوى كارت */
+  .content{
+    background:#fff!important;
+    border-radius:20px!important;
+    padding:12px!important;
+    border:1px solid #eee!important;
+    box-shadow:0 4px 20px rgba(0,0,0,.04)!important;
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch
+  }
+  table{min-width:650px!important}
+  table th{font-size:12px!important;padding:10px 6px!important;position:sticky;top:0;background:#fff!important;z-index:2}
+  table td{font-size:13px!important;padding:10px 6px!important}
 
-  /* الجدول يقلب كروت */
-  #daily table, #total table, #purchases table{ display:block; min-width:100%!important; border:none!important }
-  #daily thead, #total thead{ display:none!important }
-  #daily tr, #total tr{
-    display:block; background:#fff; border-radius:16px;
-    margin-bottom:12px; padding:12px;
-    box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #eee
-  }
-  #daily td, #total td{
-    display:flex; justify-content:space-between; align-items:center;
-    border:none!important; padding:8px 0!important; border-bottom:1px dashed #eee!important
-  }
-  #daily td:last-child{ border:none!important }
-  #daily td::before{
-    content:attr(data-label); font-weight:700; color:#888; font-size:12px
-  }
-  /* هنضيف الليبل بالـ JS */
-
+  /* زرار التصدير زي تطبيقات الايفون */
   #unified-all-global{
-    left:12px!important; right:12px!important; bottom:12px!important;
-    width:auto!important; border-radius:16px!important;
-    padding:16px!important; font-size:15px!important;
-    background:#000!important; box-shadow:0 8px 24px rgba(0,0,0,.2)!important
+    left:14px!important;right:14px!important;bottom:14px!important;
+    width:auto!important;
+    border-radius:18px!important;
+    padding:18px!important;
+    font-size:15px!important;
+    background:#000!important;
+    color:#fff!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.25)!important
   }
-}
-
-@media (max-width: 480px){
- .nav-tab{ font-size:12px!important; padding:7px 12px!important }
 }
