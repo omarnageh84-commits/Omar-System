@@ -1,53 +1,86 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Omar System - Google Style</title>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/pharmacy.css">
-<link rel="stylesheet" href="css/private.css">
-<link rel="stylesheet" href="css/mobile-fix.css?v=28">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Omar Sheets Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--g-blue:#1a73e8;--g-bg:#f8f9fa;--g-border:#dadce0;--g-text:#202124}
-body{background:var(--g-bg)!important;font-family:'Google Sans','Tajawal',sans-serif!important;color:var(--g-text)}
-.app-container{max-width:1400px;margin:0 auto;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-top:12px;overflow:hidden}
-.top-switch{display:flex;background:#fff;border-bottom:1px solid var(--g-border);padding:0 16px;gap:4px}
-.top-btn{background:transparent!important;color:#5f6368!important;border:none!important;border-bottom:3px solid transparent!important;border-radius:0!important;padding:14px 20px!important;font-weight:500!important;box-shadow:none!important}
-.top-btn.active{color:var(--g-blue)!important;border-bottom-color:var(--g-blue)!important;background:#e8f0fe!important;border-radius:8px 8px 0 0!important}
-.nav-bar{background:#fff!important;border-bottom:1px solid var(--g-border);padding:8px 16px!important;display:flex;gap:8px;flex-wrap:wrap}
-.nav-tab{background:#f1f3f4!important;color:#5f6368!important;border:1px solid transparent!important;border-radius:20px!important;padding:8px 18px!important;font-weight:500!important;box-shadow:none!important}
-.nav-tab.active{background:#e8f0fe!important;color:var(--g-blue)!important;border-color:#d2e3fc!important}
-.content{padding:16px!important;background:#fff}
-table{border:1px solid var(--g-border)!important;border-radius:8px!important;overflow:hidden;border-collapse:separate!important;border-spacing:0!important;width:100%}
-table th{background:#f8f9fa!important;color:#5f6368!important;font-weight:500!important;padding:10px!important;border-bottom:1px solid var(--g-border)!important}
-table td{border-bottom:1px solid #f1f3f4!important;padding:8px 10px!important}
-table input{background:#fff!important;border:1px solid var(--g-border)!important;border-radius:6px!important;padding:6px 8px!important}
-table input:focus{border-color:var(--g-blue)!important;outline:2px solid #d2e3fc!important}
-#unified-all-global{background:var(--g-blue)!important;border-radius:24px!important;padding:14px 28px!important;font-weight:500!important;box-shadow:0 1px 3px rgba(0,0,0,.2)!important;left:24px!important;bottom:24px!important}
-#unified-all-global:hover{box-shadow:0 4px 8px rgba(0,0,0,.2)!important}
+*{font-family:'Tajawal',sans-serif;box-sizing:border-box}
+body{margin:0;background:#f8f9fa}
 .tab-content{display:none}.tab-content.active{display:block}
-@media(max-width:768px){.app-container{border-radius:0;margin:0}.top-switch{overflow-x:auto;white-space:nowrap}.nav-bar{overflow-x:auto;flex-wrap:nowrap}.content{padding:8px!important}table{min-width:650px!important}}
+/* Google Header */
+.g-head{background:#fff;border-bottom:1px solid #dadce0;padding:10px 12px;position:sticky;top:0;z-index:100}
+.g-top{display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;gap:10px;align-items:center}
+.ico{width:38px;height:38px;background:#34a853;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.title{font-weight:800;font-size:17px}
+.sub{font-size:10px;color:#5f6368}
+.menu{font-size:12px;color:#5f6368;display:flex;gap:12px;overflow-x:auto;white-space:nowrap;padding-top:8px}
+.menu::-webkit-scrollbar{display:none}
+.fx{background:#fff;border-bottom:1px solid #dadce0;padding:10px 12px;display:flex;gap:8px;position:sticky;top:58px;z-index:90;overflow-x:auto}
+.fx-box{flex:1;min-width:140px;background:#f1f3f4;border-radius:20px;padding:8px 12px;font-size:12px;color:#5f6368;display:flex;gap:6px;align-items:center}
+.tabs{display:flex;gap:6px}
+.tab{flex:0 0 auto;padding:7px 14px;border-radius:16px;background:#e8f0fe;color:#1967d2;border:1px solid #d2e3fc;font-size:12px;font-weight:700;white-space:nowrap}
+.tab.active{background:#1a73e8;color:#fff}
+.toolbar{background:#fff;border-bottom:1px solid #dadce0;padding:10px 12px;display:flex;gap:8px;overflow-x:auto;align-items:center}
+.btn{flex:0 0 auto;padding:8px 12px;border-radius:6px;border:1px solid #dadce0;background:#fff;font-size:11px;font-weight:700}
+.btn.p{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.badge{margin-right:auto;background:#f1f3f4;padding:6px 10px;border-radius:14px;font-size:10px;color:#5f6368}
+
+/* Cards - لليومية */
+.cards{padding:10px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid #dadce0;border-radius:12px;padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.c-top{display:flex;justify-content:space-between;align-items:center}
+.av{width:34px;height:34px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.st{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800}
+.st.ok{background:#e6f4ea;color:#137333}.st.no{background:#fce8e6;color:#c5221f}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fld{background:#f8f9fa;padding:8px;border-radius:8px;font-size:12px}
+.fld b{display:block;font-size:9px;color:#5f6368}
+
+/* Nav */
+.app{max-width:800px;margin:0 auto;padding-bottom:80px}
+.top-switch{display:flex;gap:6px;background:#fff;border:1px solid #eee;padding:6px;border-radius:16px;margin:10px}
+.top-btn{flex:1;height:44px;border-radius:10px;border:0;background:#f1f3f6;font-weight:800}
+.top-btn.active{background:#000;color:#fff}
+.nav-bar{display:flex;gap:6px;background:#fff;border:1px solid #eee;border-radius:14px;padding:8px;margin:10px;overflow-x:auto}
+.nav-bar::-webkit-scrollbar{display:none}
+.nav-tab{flex:0 0 auto;white-space:nowrap;padding:8px 14px;border-radius:10px;background:#f6f7f9;border:1px solid #eee;font-size:12px;font-weight:700}
+.nav-tab.active{background:#7c3aed;color:#fff}
+.content{background:#fff;border:1px solid #eee;border-radius:18px;margin:10px;overflow:hidden}
+.footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dadce0;padding:10px 12px;display:flex;gap:10px}
 </style>
 </head>
 <body>
-<div class="app-container">
-<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #dadce0">
-<img src="https://www.gstatic.com/images/branding/product/1x/sheets_2020q4_48dp.png" width="32"><span style="font-size:20px;font-weight:500;color:#5f6368">Omar System</span><span style="background:#e8f0fe;color:#1a73e8;padding:2px 8px;border-radius:12px;font-size:11px">Google Style</span>
-</div>
+<div class="app">
 <div class="top-switch">
-<button class="top-btn active" data-top="pharmacy">📊 الصيدلية</button>
+<button class="top-btn active" data-top="pharmacy">💊 الصيدلية</button>
 <button class="top-btn" data-top="private">👤 الخاص</button>
 </div>
+
 <div id="pharmacyApp">
 <div class="nav-bar" id="navBar">
 <button class="nav-tab active" data-tab="daily">📅 اليومية</button>
-<button class="nav-tab" data-tab="total">📈 الاجمالي</button>
+<button class="nav-tab" data-tab="total">📊 الاجمالي</button>
 <button class="nav-tab" data-tab="purchases">🧾 المشتريات</button>
-<button class="nav-tab" data-tab="sales">📦 المبيعات للمخزن</button>
+<button class="nav-tab" data-tab="sales">📦 المبيعات</button>
 <button class="nav-tab" data-tab="database">🗄 قواعد البيانات</button>
 </div>
 <div class="content">
-<div id="daily" class="tab-content active"></div>
+<div id="daily" class="tab-content active">
+<!-- Google Sheets Style Mobile -->
+<div class="g-head">
+<div class="g-top"><div class="logo"><div class="ico">📊</div><div><div class="title">نظام عمر</div><div class="sub">نظام إدارة الصيدلية</div></div></div><div style="font-size:11px">☁️ تم الحفظ</div></div>
+<div class="menu"><span>مساعدة</span><span>ملحقات</span><span>أدوات</span><span>بيانات</span><span>تنسيق</span><span>إدراج</span><span>عرض</span><span>تعديل</span><span>ملف</span></div>
+</div>
+<div class="fx"><div class="fx-box"><span style="color:#34a853;font-weight:800">fx</span> بحث في الخلايا...</div><div class="tabs"><div class="tab active">✓ الموظفون</div><div class="tab">المخزن</div><div class="tab">المبيعات</div></div></div>
+<div class="toolbar"><button class="btn p">+ إضافة موظف</button><button class="btn">فلترة</button><button class="btn">ترتيب</button><div class="badge">3 موظفين</div></div>
+<div class="cards">
+<div class="card"><div class="c-top"><div style="display:flex;gap:10px;align-items:center"><div class="av">ج</div><div><div style="font-weight:800;font-size:13px">عمر جمال</div><div style="font-size:10px;color:#5f6368">صباحي • طبيب صيدلي</div></div></div><div class="st ok">● حاضر</div></div><div class="grid"><div class="fld"><b>رقم الهاتف</b>050-112-3344</div><div class="fld"><b>تاريخ التعيين</b>15 فبراير 2023</div></div></div>
+<div class="card"><div class="c-top"><div style="display:flex;gap:10px;align-items:center"><div class="av" style="background:#0d652d">ع</div><div><div style="font-weight:800;font-size:13px">مساعد صيدلي</div><div style="font-size:10px;color:#5f6368">مسائي</div></div></div><div class="st ok">● حاضر</div></div><div class="grid"><div class="fld"><b>الهاتف</b>050-555-7788</div><div class="fld"><b>التعيين</b>03 يوليو 2023</div></div></div>
+<div class="card" style="border-color:#fbbc04"><div class="c-top"><div style="display:flex;gap:10px;align-items:center"><div class="av" style="background:#c5221f">د.م</div><div><div style="font-weight:800;font-size:13px">طبيب صيدلي</div><div style="font-size:10px;color:#5f6368">مناوبة</div></div></div><div class="st no">● غياب</div></div><div class="grid"><div class="fld"><b>الهاتف</b>050-999-4411</div><div class="fld"><b>التعيين</b>20 يناير 2023</div></div></div>
+</div>
+</div>
 <div id="total" class="tab-content"></div>
 <div id="purchases" class="tab-content"></div>
 <div id="sales" class="tab-content"></div>
@@ -56,46 +89,23 @@ table input:focus{border-color:var(--g-blue)!important;outline:2px solid #d2e3fc
 </div>
 <div id="privateApp" style="display:none"><div id="private"></div></div>
 </div>
-<button id="unified-all-global" onclick="unifiedExportAll()">📥 تصدير XLSX</button>
+
+<button onclick="unifiedExportAll()" style="position:fixed;bottom:16px;left:16px;width:56px;height:56px;border-radius:50%;background:#000;color:#fff;font-size:22px;border:none;box-shadow:0 8px 24px rgba(0,0,0,.3)">📦</button>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="js/pharmacy/googleSync.js?v=28"></script>
-<script src="js/pharmacy/daily.js?v=28"></script>
-<script src="js/pharmacy/total.js?v=28"></script>
-<script src="js/pharmacy/purchases.js?v=28"></script>
-<script src="js/pharmacy/sales.js?v=28"></script>
-<script src="js/pharmacy/database.js?v=28"></script>
-<script src="js/pharmacy/actions.js?v=28"></script>
-<script src="js/private/private.js?v=28"></script>
-<script src="js/private/masrofaty.js?v=28"></script>
-<script src="js/private/dyon.js?v=28"></script>
-<script src="js/private/hodor.js?v=28"></script>
-<script src="js/private/notes.js?v=28"></script>
-<script type="module" src="firebase-config.js?v=28"></script>
-<script type="module" src="app.js?v=28"></script>
-
+<script src="js/pharmacy/daily.js?v=33"></script>
+<script src="js/pharmacy/total.js?v=33"></script>
+<script src="js/pharmacy/purchases.js?v=33"></script>
+<script src="js/pharmacy/sales.js?v=33"></script>
+<script src="js/pharmacy/database.js?v=33"></script>
+<script src="js/private/private.js?v=33"></script>
+<script type="module" src="app.js?v=33"></script>
 <script>
-function getStore(n){try{let v=localStorage.getItem(n);if(v)return JSON.parse(v);}catch(e){}return null;}
-function deepParse(v){try{if(typeof v==='string'){let t=v.trim();if(t.startsWith('{')||t.startsWith('['))return JSON.parse(t);}}catch(e){}return v;}
-function normalize(s){if(!s)return[];let arr=Array.isArray(s)?s:Object.values(s);return arr.map(v=>{let d=deepParse(v);if(typeof d==='string')d=deepParse(d);return d;}).filter(Boolean);}
-window.unifiedExportAll=function(){
- try{
-  if(typeof XLSX==='undefined'){alert('استنى ثانيتين');return;}
-  let wb=XLSX.utils.book_new();
-  let store=getStore('dailyStore')||{};let r1=[['التاريخ','الموظف','الشيفت','العجز','المورد','القيمة']];
-  Object.keys(store).forEach(k=>{let d=store[k];let arr=Array.isArray(d)?d:Object.values(d||{});let rows={};arr.forEach(it=>{if(!it||!it.id)return;let m=(it.id+'').match(/t1_r(\d+)_c(\d+)/);if(!m)return;let R=m[1],C=m[2];if(!rows[R])rows[R]={emp:'',shift:'',diff:'',sup:'',val:''};if(C==='1')rows[R].emp=it.val||'';if(C==='2')rows[R].shift=it.val||'';if(C==='3')rows[R].diff=it.val||'';if(C==='5')rows[R].sup=it.val||'';if(C==='6')rows[R].val=it.val||'';});Object.values(rows).forEach(x=>{if(x.emp||x.val)r1.push([k,x.emp,x.shift,x.diff,x.sup,x.val]);});});
-  if(r1.length>1)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r1),'1- اليومية');
-  let purch=getStore('purchaseStore')||[];if(purch.length){let r=[['التاريخ','المورد','النوع','طريقة الدفع','القيمة']];purch.forEach(o=>r.push([o.date||'',o.supplier||'',o.type||'',o.pay||'',o.value||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'2- المشتريات');}
-  let pStore=getStore('privateStore');if(pStore){let list=normalize(pStore);let m=list.filter(o=>!(o.bayan||'').includes('ديون'));let d=list.filter(o=>(o.bayan||'').includes('ديون'));if(m.length){let r=[['التاريخ','البيان','المبلغ','الفئة','طريقة الدفع']];m.forEach(o=>r.push([o.date||'',o.bayan||'',o.amount||'',o.cat||'',o.pay||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'3- مصروفاتي');}if(d.length){let r=[['التاريخ','البيان','المبلغ','الدكتور','طريقة الدفع']];d.forEach(o=>r.push([o.date||'',o.bayan||'',o.amount||'',o.cat||'',o.pay||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'4- الديون');}}
-  let fixed=getStore('monthlyFixed_v16')||getStore('monthlyFixed_v3');if(fixed){let arr=normalize(fixed);if(arr.length&&arr[0].name){let r=[['البند','المبلغ']];arr.forEach(o=>r.push([o.name||'',o.amount||'']));XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),'7- ثابتة');}}
-  XLSX.writeFile(wb,'Omar-Google-'+new Date().toISOString().slice(0,10)+'.xlsx');
-  alert('✅ اتصدر\n'+wb.SheetNames.join('\n'));
- }catch(e){alert(e.message)}
-};
-function showTab(n){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));document.getElementById(n)?.classList.add('active');document.querySelector(`[data-tab="${n}"]`)?.classList.add('active');if(n==='daily'&&typeof renderDaily==='function')renderDaily();if(n==='total'&&typeof renderTotal==='function')renderTotal();if(n==='purchases'&&typeof renderPurchases==='function')renderPurchases();if(n==='sales'&&typeof renderSales==='function')renderSales();if(n==='database'&&typeof renderDatabase==='function')renderDatabase();}
+function showTab(n){document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));document.getElementById(n)?.classList.add('active');document.querySelector(`[data-tab="${n}"]`)?.classList.add('active');if(typeof renderDaily==='function'&&n==='daily')renderDaily();if(typeof renderTotal==='function'&&n==='total')renderTotal();if(typeof renderPurchases==='function'&&n==='purchases')renderPurchases();if(typeof renderSales==='function'&&n==='sales')renderSales();if(typeof renderDatabase==='function'&&n==='database')renderDatabase();}
 function showTop(m){document.querySelectorAll('.top-btn').forEach(b=>b.classList.remove('active'));if(m==='pharmacy'){document.getElementById('pharmacyApp').style.display='block';document.getElementById('privateApp').style.display='none';document.querySelector('[data-top="pharmacy"]').classList.add('active');showTab('daily');}else{document.getElementById('pharmacyApp').style.display='none';document.getElementById('privateApp').style.display='block';document.querySelector('[data-top="private"]').classList.add('active');if(typeof renderPrivate==='function')renderPrivate();}}
 document.querySelectorAll('.nav-tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));document.querySelectorAll('.top-btn').forEach(b=>b.addEventListener('click',()=>showTop(b.dataset.top)));
-window.addEventListener('load',async()=>{if(typeof fetchSheetData==='function')await fetchSheetData();showTop('pharmacy');});
+window.addEventListener('load',()=>showTop('pharmacy'));
+function unifiedExportAll(){alert('📦 تصدير XLSX')}
 </script>
 </body>
 </html>
